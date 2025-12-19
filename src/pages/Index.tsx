@@ -18,6 +18,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { ExportDataDialog } from "@/components/ExportDataDialog";
 import { BulkDeleteDialog } from "@/components/BulkDeleteDialog";
 import { SingleDeleteDialog } from "@/components/SingleDeleteDialog";
+import { TestDetailModal } from "@/components/TestDetailModal";
 import { 
   Download, 
   Search, 
@@ -54,6 +55,8 @@ const Index = () => {
   const [bulkDeleteDialogOpen, setBulkDeleteDialogOpen] = useState(false);
   const [singleDeleteDialogOpen, setSingleDeleteDialogOpen] = useState(false);
   const [deleteItemName, setDeleteItemName] = useState("");
+  const [detailModalOpen, setDetailModalOpen] = useState(false);
+  const [selectedDetailItem, setSelectedDetailItem] = useState<typeof sampleData[0] | null>(null);
   
   // Tab state
   const [activeTab, setActiveTab] = useState("semua");
@@ -143,6 +146,11 @@ const Index = () => {
   const handleDelete = (name: string) => {
     setDeleteItemName(name);
     setSingleDeleteDialogOpen(true);
+  };
+
+  const handleViewDetail = (item: typeof sampleData[0]) => {
+    setSelectedDetailItem(item);
+    setDetailModalOpen(true);
   };
 
   const getStatusStyle = (status: string) => {
@@ -388,6 +396,7 @@ const Index = () => {
                           variant="ghost"
                           size="icon"
                           className="h-8 w-8 text-primary hover:text-primary hover:bg-primary/10 rounded-full"
+                          onClick={() => handleViewDetail(item)}
                         >
                           <Eye className="h-4 w-4" />
                         </Button>
@@ -479,6 +488,18 @@ const Index = () => {
         open={singleDeleteDialogOpen}
         onOpenChange={setSingleDeleteDialogOpen}
         userName={deleteItemName}
+      />
+      <TestDetailModal
+        open={detailModalOpen}
+        onOpenChange={setDetailModalOpen}
+        testData={selectedDetailItem ? {
+          id: selectedDetailItem.id,
+          userName: selectedDetailItem.name,
+          startTime: `10.00 WIB ${selectedDetailItem.startDate}`,
+          endTime: selectedDetailItem.endDate !== "-" ? `11.00 WIB ${selectedDetailItem.endDate}` : "-",
+          status: selectedDetailItem.status as "Selesai" | "Sedang Berjalan" | "Dihentikan",
+          result: `Profil Kode ${selectedDetailItem.result}`,
+        } : undefined}
       />
     </div>
   );
