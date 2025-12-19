@@ -65,9 +65,11 @@ const Index = () => {
   // Search & Filter states
   const [searchQuery, setSearchQuery] = useState("");
   const [startDate, setStartDate] = useState<Date>();
+  const [endDate, setEndDate] = useState<Date>();
   const [categoryFilter, setCategoryFilter] = useState("");
   const [resultFilter, setResultFilter] = useState("");
   const [sortBy, setSortBy] = useState("");
+  const [filterPanelOpen, setFilterPanelOpen] = useState(false);
   
   // Selection states
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
@@ -227,7 +229,7 @@ const Index = () => {
         </div>
 
         {/* Controls Row */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
           {/* Left: Counter and Selected */}
           <div className="flex items-center gap-4">
             <span className="text-sm text-muted-foreground">
@@ -240,7 +242,7 @@ const Index = () => {
             )}
           </div>
 
-          {/* Right: Search and Filters */}
+          {/* Right: Search and Filter Toggle */}
           <div className="flex flex-wrap items-center gap-3">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -252,52 +254,158 @@ const Index = () => {
               />
             </div>
 
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className={cn(
-                    "h-9 gap-2 bg-background",
-                    startDate && "text-foreground"
-                  )}
-                >
-                  <CalendarIcon className="h-4 w-4" />
-                  {startDate ? format(startDate, "dd/MM/yyyy") : "Pilih Tanggal"}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0 bg-popover border-border shadow-lg" align="end">
-                <Calendar
-                  mode="single"
-                  selected={startDate}
-                  onSelect={setStartDate}
-                  initialFocus
-                  className="p-3 pointer-events-auto"
-                />
-              </PopoverContent>
-            </Popover>
-
-            <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="h-9 w-[160px] bg-background">
-                <div className="flex items-center gap-2">
-                  <ArrowUpDown className="h-4 w-4" />
-                  <SelectValue placeholder="Urutkan" />
-                </div>
-              </SelectTrigger>
-              <SelectContent className="bg-popover border-border">
-                <SelectItem value="name-asc">Nama A-Z</SelectItem>
-                <SelectItem value="name-desc">Nama Z-A</SelectItem>
-                <SelectItem value="start-date">Tanggal Mulai</SelectItem>
-                <SelectItem value="end-date">Tanggal Selesai</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Button variant="outline" size="sm" className="h-9 gap-2 bg-background">
+            <Button 
+              variant={filterPanelOpen ? "default" : "outline"} 
+              size="sm" 
+              className="h-9 gap-2"
+              onClick={() => setFilterPanelOpen(!filterPanelOpen)}
+            >
               <SlidersHorizontal className="h-4 w-4" />
               Filter
             </Button>
           </div>
         </div>
+
+        {/* Filter Panel */}
+        {filterPanelOpen && (
+          <div className="bg-background rounded-xl border border-border p-4 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* Date Range Filter */}
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                  Rentang Tanggal
+                </label>
+                <div className="flex gap-2">
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className={cn(
+                          "h-9 flex-1 justify-start text-left font-normal",
+                          !startDate && "text-muted-foreground"
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {startDate ? format(startDate, "dd/MM/yy") : "Mulai"}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0 bg-popover border-border shadow-lg" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={startDate}
+                        onSelect={setStartDate}
+                        initialFocus
+                        className="p-3 pointer-events-auto"
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className={cn(
+                          "h-9 flex-1 justify-start text-left font-normal",
+                          !endDate && "text-muted-foreground"
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {endDate ? format(endDate, "dd/MM/yy") : "Selesai"}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0 bg-popover border-border shadow-lg" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={endDate}
+                        onSelect={setEndDate}
+                        initialFocus
+                        className="p-3 pointer-events-auto"
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+              </div>
+
+              {/* Category Filter */}
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                  Kategori Tes
+                </label>
+                <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                  <SelectTrigger className="h-9 bg-background">
+                    <SelectValue placeholder="Pilih Kategori Tes" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-popover border-border">
+                    <SelectItem value="all">Semua Kategori</SelectItem>
+                    <SelectItem value="profil-karier">Tes Profil Karier</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Result Filter */}
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                  Hasil Tes
+                </label>
+                <Select value={resultFilter} onValueChange={setResultFilter}>
+                  <SelectTrigger className="h-9 bg-background">
+                    <SelectValue placeholder="Pilih Hasil Tes" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-popover border-border">
+                    <SelectItem value="all">Semua Hasil</SelectItem>
+                    <SelectItem value="RIA">RIA</SelectItem>
+                    <SelectItem value="SEC">SEC</SelectItem>
+                    <SelectItem value="AIR">AIR</SelectItem>
+                    <SelectItem value="CRE">CRE</SelectItem>
+                    <SelectItem value="IAS">IAS</SelectItem>
+                    <SelectItem value="ESC">ESC</SelectItem>
+                    <SelectItem value="RCS">RCS</SelectItem>
+                    <SelectItem value="ARI">ARI</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Sort By Filter */}
+              <div className="space-y-2">
+                <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                  Urutkan Berdasarkan
+                </label>
+                <Select value={sortBy} onValueChange={setSortBy}>
+                  <SelectTrigger className="h-9 bg-background">
+                    <SelectValue placeholder="Urutkan berdasarkan" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-popover border-border">
+                    <SelectItem value="name-asc">Nama User A-Z</SelectItem>
+                    <SelectItem value="name-desc">Nama User Z-A</SelectItem>
+                    <SelectItem value="start-date">Tanggal Mulai</SelectItem>
+                    <SelectItem value="end-date">Tanggal Selesai</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {/* Filter Actions */}
+            <div className="flex justify-end gap-2 mt-4 pt-4 border-t border-border">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setStartDate(undefined);
+                  setEndDate(undefined);
+                  setCategoryFilter("");
+                  setResultFilter("");
+                  setSortBy("");
+                }}
+              >
+                Reset Filter
+              </Button>
+              <Button size="sm" onClick={() => setFilterPanelOpen(false)}>
+                Terapkan
+              </Button>
+            </div>
+          </div>
+        )}
 
         {/* Data Table */}
         <div className="bg-background rounded-xl border border-border overflow-hidden">

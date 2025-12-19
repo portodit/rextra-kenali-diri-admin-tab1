@@ -141,30 +141,34 @@ export function AppSidebar({ className }: AppSidebarProps) {
       {/* Logo Section */}
       <div className="h-16 flex items-center justify-between px-4 border-b border-border">
         {!isCollapsed ? (
-          <div className="flex items-center gap-2">
+          <>
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
+                <span className="text-primary-foreground font-bold text-sm">R</span>
+              </div>
+              <span className="font-semibold text-foreground">REXTRA</span>
+            </div>
+            <button
+              onClick={() => setIsCollapsed(true)}
+              className="h-7 w-7 rounded-md flex items-center justify-center hover:bg-muted transition-colors"
+            >
+              <ChevronLeft className="h-4 w-4 text-muted-foreground" />
+            </button>
+          </>
+        ) : (
+          <div className="flex flex-col items-center gap-2 w-full">
             <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
               <span className="text-primary-foreground font-bold text-sm">R</span>
             </div>
-            <span className="font-semibold text-foreground">REXTRA</span>
-          </div>
-        ) : (
-          <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center mx-auto">
-            <span className="text-primary-foreground font-bold text-sm">R</span>
+            <button
+              onClick={() => setIsCollapsed(false)}
+              className="h-6 w-6 rounded-md flex items-center justify-center hover:bg-muted transition-colors"
+            >
+              <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
+            </button>
           </div>
         )}
       </div>
-
-      {/* Toggle Button */}
-      <button
-        onClick={() => setIsCollapsed(!isCollapsed)}
-        className="absolute -right-3 top-20 h-6 w-6 rounded-full bg-background border border-border flex items-center justify-center hover:bg-muted transition-colors z-10"
-      >
-        {isCollapsed ? (
-          <ChevronRight className="h-3.5 w-3.5 text-muted-foreground" />
-        ) : (
-          <ChevronLeft className="h-3.5 w-3.5 text-muted-foreground" />
-        )}
-      </button>
 
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto p-3 space-y-6">
