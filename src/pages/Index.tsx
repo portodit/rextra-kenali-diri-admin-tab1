@@ -158,29 +158,27 @@ const Index = () => {
           </p>
         </div>
 
-        {/* Controls: Search & Export */}
-        <div className="flex flex-col sm:flex-row gap-4 mb-4">
+        {/* Controls: Search & Action Buttons */}
+        <div className="flex flex-col sm:flex-row gap-4 mb-6">
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Ketikkan nama pengguna"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 h-11 bg-background border-input hover:border-primary/50 focus:border-primary transition-colors"
+              className="pl-10 h-10 bg-background border-input hover:border-primary/50 focus:border-primary transition-colors rounded-lg"
             />
           </div>
           <div className="flex gap-2">
-            {selectedItems.length > 0 && (
-              <Button 
-                variant="outline"
-                onClick={() => setBulkDeleteDialogOpen(true)}
-                className="gap-2 border-destructive/30 text-destructive hover:bg-destructive/10"
-              >
-                <Trash2 className="h-4 w-4" />
-                Hapus ({selectedItems.length})
-              </Button>
-            )}
-            <Button onClick={() => setExportDialogOpen(true)} className="gap-2">
+            <Button 
+              variant="outline"
+              onClick={() => setBulkDeleteDialogOpen(true)}
+              className="gap-2 h-10 border-destructive/30 text-destructive hover:bg-destructive/10 hover:border-destructive/50 rounded-lg"
+            >
+              <Trash2 className="h-4 w-4" />
+              Hapus Data Massal
+            </Button>
+            <Button onClick={() => setExportDialogOpen(true)} className="gap-2 h-10 rounded-lg">
               <Download className="h-4 w-4" />
               Ekspor Data
             </Button>
@@ -188,21 +186,21 @@ const Index = () => {
         </div>
 
         {/* Filters Row */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div className="flex flex-wrap items-end gap-4 mb-6">
           {/* Date Range Filter */}
           <div className="space-y-1.5">
-            <label className="text-sm font-medium text-foreground">Rentang Tanggal</label>
+            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Rentang Tanggal</label>
             <Popover>
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
                   className={cn(
-                    "w-full h-10 justify-start text-left font-normal bg-background border-input hover:border-primary/50",
+                    "w-[180px] h-10 justify-start text-left font-normal bg-background border-input hover:border-primary/50 rounded-lg",
                     !startDate && "text-muted-foreground"
                   )}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {startDate ? format(startDate, "dd MMM yyyy", { locale: id }) : "Pilih tanggal"}
+                  {startDate ? format(startDate, "dd/MM/yyyy", { locale: id }) : "Pilih tanggal"}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0 bg-popover border-border shadow-custom-lg" align="start">
@@ -219,10 +217,10 @@ const Index = () => {
 
           {/* Category Filter */}
           <div className="space-y-1.5">
-            <label className="text-sm font-medium text-foreground">Kategori Tes</label>
+            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Kategori Tes</label>
             <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-              <SelectTrigger className="h-10 bg-background border-input hover:border-primary/50 transition-colors">
-                <SelectValue placeholder="Pilih Kategori Tes" />
+              <SelectTrigger className="w-[180px] h-10 bg-background border-input hover:border-primary/50 transition-colors rounded-lg">
+                <SelectValue placeholder="Semua Kategori" />
               </SelectTrigger>
               <SelectContent className="bg-popover border-border shadow-custom-lg">
                 <SelectItem value="all">Semua Kategori</SelectItem>
@@ -233,10 +231,10 @@ const Index = () => {
 
           {/* Result Filter */}
           <div className="space-y-1.5">
-            <label className="text-sm font-medium text-foreground">Hasil Tes</label>
+            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Hasil Tes</label>
             <Select value={resultFilter} onValueChange={setResultFilter}>
-              <SelectTrigger className="h-10 bg-background border-input hover:border-primary/50 transition-colors">
-                <SelectValue placeholder="Pilih Hasil Tes" />
+              <SelectTrigger className="w-[160px] h-10 bg-background border-input hover:border-primary/50 transition-colors rounded-lg">
+                <SelectValue placeholder="Semua Hasil" />
               </SelectTrigger>
               <SelectContent className="bg-popover border-border shadow-custom-lg">
                 <SelectItem value="all">Semua Hasil</SelectItem>
@@ -250,9 +248,9 @@ const Index = () => {
 
           {/* Sort By */}
           <div className="space-y-1.5">
-            <label className="text-sm font-medium text-foreground">Urutkan</label>
+            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Urutkan</label>
             <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="h-10 bg-background border-input hover:border-primary/50 transition-colors">
+              <SelectTrigger className="w-[180px] h-10 bg-background border-input hover:border-primary/50 transition-colors rounded-lg">
                 <SelectValue placeholder="Urutkan berdasarkan" />
               </SelectTrigger>
               <SelectContent className="bg-popover border-border shadow-custom-lg">
@@ -263,6 +261,13 @@ const Index = () => {
               </SelectContent>
             </Select>
           </div>
+
+          {/* Selected count badge */}
+          {selectedItems.length > 0 && (
+            <div className="flex items-center h-10 px-3 rounded-lg bg-primary/10 text-primary text-sm font-medium">
+              {selectedItems.length} data dipilih
+            </div>
+          )}
         </div>
 
         {/* Data Table */}
