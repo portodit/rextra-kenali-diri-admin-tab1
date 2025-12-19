@@ -30,6 +30,8 @@ import {
   DollarSign,
   Check,
   Circle,
+  Activity,
+  Target,
 } from "lucide-react";
 
 interface TestDetailModalProps {
@@ -232,7 +234,7 @@ export function TestDetailModal({
             {/* Row 5 */}
             <div className="flex items-center py-2 border-b border-border/50">
               <div className="flex items-center gap-2 w-40 text-muted-foreground">
-                <Award className="h-4 w-4" />
+                <Activity className="h-4 w-4" />
                 <span className="text-sm">Status Tes</span>
               </div>
               {getStatusBadge(testData.status)}
@@ -241,7 +243,7 @@ export function TestDetailModal({
             {/* Row 6 */}
             <div className="flex items-center py-2">
               <div className="flex items-center gap-2 w-40 text-muted-foreground">
-                <Award className="h-4 w-4" />
+                <Target className="h-4 w-4" />
                 <span className="text-sm">Hasil Tes</span>
               </div>
               <span className="text-sm font-semibold text-primary">{testData.result}</span>
@@ -279,48 +281,63 @@ export function TestDetailModal({
 
             {/* Tab RIASEC */}
             <TabsContent value="riasec" className="space-y-4">
-              <div className="rounded-lg border border-border overflow-hidden">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="bg-muted/50">
-                      <TableHead className="font-semibold">Tipe Kepribadian</TableHead>
-                      <TableHead className="font-semibold text-center">Nilai Skor</TableHead>
-                      <TableHead className="font-semibold text-center">Rank</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {riasecData.map((item) => (
-                      <TableRow key={item.type} className="hover:bg-muted/30">
-                        <TableCell className="font-medium">{item.type}</TableCell>
-                        <TableCell className="text-center">
-                          <div className="flex items-center justify-center gap-2">
-                            <div className="w-24 h-2 bg-muted rounded-full overflow-hidden">
-                              <div
-                                className="h-full bg-primary rounded-full transition-all"
-                                style={{ width: `${item.score}%` }}
-                              />
-                            </div>
-                            <span className="text-sm font-medium">{item.score}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-center">{getRankBadge(item.rank)}</TableCell>
+              {/* Section: Penilaian RIASEC */}
+              <div className="p-5 rounded-md border border-[#cacaca]" style={{ borderWidth: '0.6px' }}>
+                <h4 className="text-sm font-semibold text-foreground mb-2">Penilaian RIASEC</h4>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Menampilkan skor dan peringkat untuk setiap tipe kepribadian RIASEC berdasarkan hasil tes pengguna.
+                </p>
+                
+                <div className="rounded-md border border-[#cacaca] overflow-hidden" style={{ borderWidth: '0.6px' }}>
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="bg-muted/50">
+                        <TableHead className="font-semibold">Tipe Kepribadian</TableHead>
+                        <TableHead className="font-semibold text-center">Nilai Skor</TableHead>
+                        <TableHead className="font-semibold text-center">Rank</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {riasecData.map((item) => (
+                        <TableRow key={item.type} className="hover:bg-muted/30">
+                          <TableCell className="font-medium">{item.type}</TableCell>
+                          <TableCell className="text-center">
+                            <div className="flex items-center justify-center gap-2">
+                              <div className="w-24 h-2 bg-muted rounded-full overflow-hidden">
+                                <div
+                                  className="h-full bg-primary rounded-full transition-all"
+                                  style={{ width: `${item.score}%` }}
+                                />
+                              </div>
+                              <span className="text-sm font-medium">{item.score}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-center">{getRankBadge(item.rank)}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
               </div>
 
-              {/* Classification Type Field */}
-              <div className="p-4 rounded-lg bg-blue-50 border border-blue-200">
-                <div className="flex items-start gap-3">
-                  <div className="p-2 rounded-md bg-blue-100">
-                    <Award className="h-5 w-5 text-blue-600" />
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-semibold text-blue-900">Classification Type: Triple</h4>
-                    <p className="text-sm text-blue-700 mt-1">
-                      Anda memiliki profil Kompleks (Triple), yang berarti fleksibilitas tinggi dalam peran teknis, analitis, dan kreatif.
-                    </p>
+              {/* Section: Classification Type */}
+              <div className="p-5 rounded-md border border-[#cacaca]" style={{ borderWidth: '0.6px' }}>
+                <h4 className="text-sm font-semibold text-foreground mb-2">Classification Type</h4>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Klasifikasi tipe kepribadian berdasarkan dominasi skor RIASEC.
+                </p>
+                
+                <div className="p-4 rounded-md bg-blue-50 border border-blue-200">
+                  <div className="flex items-start gap-3">
+                    <div className="p-2 rounded-md bg-blue-100">
+                      <Award className="h-5 w-5 text-blue-600" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-semibold text-blue-900">Triple</h4>
+                      <p className="text-sm text-blue-700 mt-1">
+                        Anda memiliki profil Kompleks (Triple), yang berarti fleksibilitas tinggi dalam peran teknis, analitis, dan kreatif.
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -328,75 +345,93 @@ export function TestDetailModal({
 
             {/* Tab IKIGAI */}
             <TabsContent value="ikigai" className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {ikigaiData.map((item) => (
-                  <div
-                    key={item.title}
-                    className={`p-4 rounded-lg border ${item.borderColor} ${item.bgColor} transition-all hover:shadow-md`}
-                  >
-                    <div className="flex items-start gap-3">
-                      <div className={`p-2 rounded-md bg-white/80`}>
-                        <item.icon className={`h-5 w-5 ${item.color}`} />
-                      </div>
-                      <div>
-                        <h4 className="text-sm font-semibold text-foreground">{item.title}</h4>
-                        <p className="text-sm text-muted-foreground mt-1">{item.description}</p>
+              {/* Section: Hasil Analisis IKIGAI */}
+              <div className="p-5 rounded-md border border-[#cacaca]" style={{ borderWidth: '0.6px' }}>
+                <h4 className="text-sm font-semibold text-foreground mb-2">Hasil Analisis IKIGAI</h4>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Menampilkan soft skill dan preferensi pribadi pengguna berdasarkan tes IKIGAI yang mencakup empat aspek utama.
+                </p>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {ikigaiData.map((item) => (
+                    <div
+                      key={item.title}
+                      className={`p-4 rounded-md border ${item.borderColor} ${item.bgColor} transition-all hover:shadow-md`}
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className={`p-2 rounded-md bg-white/80`}>
+                          <item.icon className={`h-5 w-5 ${item.color}`} />
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-semibold text-foreground">{item.title}</h4>
+                          <p className="text-sm text-muted-foreground mt-1">{item.description}</p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             </TabsContent>
 
             {/* Tab Rekomendasi */}
             <TabsContent value="rekomendasi" className="space-y-4">
-              {recommendationData.map((rec) => (
-                <div
-                  key={rec.rank}
-                  className={`p-5 rounded-lg border-2 transition-all hover:shadow-md ${
-                    rec.isSelected
-                      ? "border-emerald-400 bg-white"
-                      : "border-border bg-white"
-                  }`}
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <h4 className="text-lg font-bold text-foreground">{rec.title}</h4>
-                        <Badge
-                          className={`${
-                            rec.rank === 1
-                              ? "bg-emerald-100 text-emerald-700 border-emerald-300"
-                              : "bg-muted text-muted-foreground border-border"
-                          }`}
-                        >
-                          {rec.matchPercent}% Match
-                        </Badge>
-                        {rec.rank === 1 && (
-                          <Badge className="bg-amber-100 text-amber-700 border-amber-300">
-                            Best Match
-                          </Badge>
+              {/* Section: Rekomendasi Karier */}
+              <div className="p-5 rounded-md border border-[#cacaca]" style={{ borderWidth: '0.6px' }}>
+                <h4 className="text-sm font-semibold text-foreground mb-2">Rekomendasi Karier</h4>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Dua rekomendasi profesi yang didasarkan pada hasil tes RIASEC dan IKIGAI pengguna.
+                </p>
+                
+                <div className="space-y-4">
+                  {recommendationData.map((rec) => (
+                    <div
+                      key={rec.rank}
+                      className={`p-5 rounded-md border-2 transition-all hover:shadow-md ${
+                        rec.isSelected
+                          ? "border-emerald-400 bg-white"
+                          : "border-[#cacaca] bg-white"
+                      }`}
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3 mb-2">
+                            <h4 className="text-lg font-bold text-foreground">{rec.title}</h4>
+                            <Badge
+                              className={`${
+                                rec.rank === 1
+                                  ? "bg-emerald-100 text-emerald-700 border-emerald-300"
+                                  : "bg-muted text-muted-foreground border-border"
+                              }`}
+                            >
+                              {rec.matchPercent}% Match
+                            </Badge>
+                            {rec.rank === 1 && (
+                              <Badge className="bg-amber-100 text-amber-700 border-amber-300">
+                                Best Match
+                              </Badge>
+                            )}
+                          </div>
+                          <p className="text-sm text-muted-foreground">{rec.description}</p>
+                        </div>
+                      </div>
+
+                      <div className="mt-4 pt-3 border-t border-border">
+                        {rec.isSelected ? (
+                          <div className="flex items-center gap-2 text-emerald-600">
+                            <Check className="h-4 w-4" />
+                            <span className="text-sm font-medium">Dipilih sebagai Rencana Karier</span>
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-2 text-muted-foreground">
+                            <Circle className="h-4 w-4" />
+                            <span className="text-sm">Tidak Dipilih</span>
+                          </div>
                         )}
                       </div>
-                      <p className="text-sm text-muted-foreground">{rec.description}</p>
                     </div>
-                  </div>
-
-                  <div className="mt-4 pt-3 border-t border-border">
-                    {rec.isSelected ? (
-                      <div className="flex items-center gap-2 text-emerald-600">
-                        <Check className="h-4 w-4" />
-                        <span className="text-sm font-medium">Dipilih sebagai Rencana Karier</span>
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-2 text-muted-foreground">
-                        <Circle className="h-4 w-4" />
-                        <span className="text-sm">Tidak Dipilih</span>
-                      </div>
-                    )}
-                  </div>
+                  ))}
                 </div>
-              ))}
+              </div>
             </TabsContent>
           </Tabs>
         </div>
