@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ExportDataDialog } from "@/components/ExportDataDialog";
-import { Download, FileSpreadsheet, Users, BarChart3 } from "lucide-react";
+import { BulkDeleteDialog } from "@/components/BulkDeleteDialog";
+import { Download, FileSpreadsheet, Users, BarChart3, Trash2 } from "lucide-react";
 
 const Index = () => {
   const [exportDialogOpen, setExportDialogOpen] = useState(false);
+  const [bulkDeleteDialogOpen, setBulkDeleteDialogOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-background">
@@ -84,18 +86,41 @@ const Index = () => {
         </div>
 
         {/* Action Section */}
-        <div className="rounded-xl border border-border bg-card p-6 shadow-custom-sm">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <h3 className="text-lg font-semibold text-foreground">Ekspor Data</h3>
-              <p className="text-sm text-muted-foreground mt-1">
-                Unduh data hasil tes dalam format spreadsheet untuk keperluan analisis
-              </p>
+        <div className="grid gap-4 md:grid-cols-2 mb-6">
+          {/* Export Card */}
+          <div className="rounded-xl border border-border bg-card p-6 shadow-custom-sm">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div>
+                <h3 className="text-lg font-semibold text-foreground">Ekspor Data</h3>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Unduh data hasil tes dalam format spreadsheet
+                </p>
+              </div>
+              <Button onClick={() => setExportDialogOpen(true)} className="gap-2 shrink-0">
+                <Download className="h-4 w-4" />
+                Ekspor Data
+              </Button>
             </div>
-            <Button onClick={() => setExportDialogOpen(true)} className="gap-2 shrink-0">
-              <Download className="h-4 w-4" />
-              Ekspor Data
-            </Button>
+          </div>
+
+          {/* Bulk Delete Card */}
+          <div className="rounded-xl border border-destructive/20 bg-card p-6 shadow-custom-sm">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div>
+                <h3 className="text-lg font-semibold text-foreground">Hapus Data Massal</h3>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Hapus banyak data hasil tes sekaligus
+                </p>
+              </div>
+              <Button 
+                variant="outline" 
+                onClick={() => setBulkDeleteDialogOpen(true)} 
+                className="gap-2 shrink-0 border-destructive/30 text-destructive hover:bg-destructive/10 hover:text-destructive"
+              >
+                <Trash2 className="h-4 w-4" />
+                Hapus Massal
+              </Button>
+            </div>
           </div>
         </div>
 
@@ -167,6 +192,9 @@ const Index = () => {
 
       {/* Export Dialog */}
       <ExportDataDialog open={exportDialogOpen} onOpenChange={setExportDialogOpen} />
+      
+      {/* Bulk Delete Dialog */}
+      <BulkDeleteDialog open={bulkDeleteDialogOpen} onOpenChange={setBulkDeleteDialogOpen} dataCount={2000} />
     </div>
   );
 };
