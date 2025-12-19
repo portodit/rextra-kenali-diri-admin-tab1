@@ -112,7 +112,7 @@ export function ExportDataDialog({ open, onOpenChange }: ExportDataDialogProps) 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[480px] bg-card border-border shadow-custom-xl animate-scale-in">
-        <DialogHeader className="space-y-3 pb-4">
+        <DialogHeader className="space-y-3 pb-4 border-b border-border">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
               <FileSpreadsheet className="h-5 w-5 text-primary" />
