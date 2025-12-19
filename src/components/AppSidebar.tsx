@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import {
   ChevronLeft,
   ChevronRight,
   ChevronDown,
+  X,
   User,
   Fingerprint,
   GraduationCap,
@@ -121,7 +122,16 @@ interface AppSidebarProps {
 export function AppSidebar({ className, onClose }: AppSidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [openDropdowns, setOpenDropdowns] = useState<string[]>(["kenali-diri"]);
+  const [isMobile, setIsMobile] = useState(false);
   const location = useLocation();
+
+  // Responsive mobile detection
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const toggleDropdown = (id: string) => {
     setOpenDropdowns((prev) =>
@@ -131,9 +141,8 @@ export function AppSidebar({ className, onClose }: AppSidebarProps) {
 
   const isDropdownOpen = (id: string) => openDropdowns.includes(id);
 
-  // On mobile, always show full sidebar (not collapsed)
-  const isMobileView = typeof window !== 'undefined' && window.innerWidth < 1024;
-  const effectiveCollapsed = isMobileView ? false : isCollapsed;
+  // On mobile (when onClose is provided), always show full sidebar
+  const effectiveCollapsed = onClose ? false : isCollapsed;
 
   return (
     <aside
@@ -153,13 +162,22 @@ export function AppSidebar({ className, onClose }: AppSidebarProps) {
               </div>
               <span className="font-semibold text-foreground">REXTRA</span>
             </div>
-            {/* Hide collapse button on mobile */}
-            <button
-              onClick={() => onClose ? onClose() : setIsCollapsed(true)}
-              className="h-7 w-7 rounded-md flex items-center justify-center hover:bg-muted transition-colors"
-            >
-              <ChevronLeft className="h-4 w-4 text-muted-foreground" />
-            </button>
+            {/* Mobile: X button to close, Desktop: Collapse button */}
+            {onClose ? (
+              <button
+                onClick={onClose}
+                className="h-7 w-7 rounded-md flex items-center justify-center hover:bg-muted transition-colors"
+              >
+                <X className="h-4 w-4 text-muted-foreground" />
+              </button>
+            ) : (
+              <button
+                onClick={() => setIsCollapsed(true)}
+                className="h-7 w-7 rounded-md flex items-center justify-center hover:bg-muted transition-colors"
+              >
+                <ChevronLeft className="h-4 w-4 text-muted-foreground" />
+              </button>
+            )}
           </>
         ) : (
           <div className="flex flex-col items-center gap-2 w-full">
