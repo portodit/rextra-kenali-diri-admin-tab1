@@ -19,6 +19,7 @@ import { ExportDataDialog } from "@/components/ExportDataDialog";
 import { BulkDeleteDialog } from "@/components/BulkDeleteDialog";
 import { SingleDeleteDialog } from "@/components/SingleDeleteDialog";
 import { TestDetailModal } from "@/components/TestDetailModal";
+import { DashboardLayout } from "@/components/DashboardLayout";
 import { 
   Download, 
   Search, 
@@ -174,8 +175,8 @@ const Index = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50/50">
-      <div className="max-w-7xl mx-auto px-6 py-8">
+    <DashboardLayout>
+      <div className="max-w-7xl mx-auto">
         {/* Page Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
           <div>
@@ -501,7 +502,7 @@ const Index = () => {
           result: `Profil Kode ${selectedDetailItem.result}`,
         } : undefined}
       />
-    </div>
+    </DashboardLayout>
   );
 };
 
