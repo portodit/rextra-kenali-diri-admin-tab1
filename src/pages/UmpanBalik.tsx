@@ -355,68 +355,65 @@ export default function UmpanBalik() {
           </Button>
         </div>
 
-        {/* Navigation Row: Button Group + Tab Menu */}
-        <div className="flex items-center justify-between border-b border-border pb-3">
-          {/* Button Group: Mahasiswa vs Validator */}
-          <div className="inline-flex p-1 rounded-lg bg-muted/60 border border-border/50">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setMainTab("mahasiswa")}
-              className={`rounded-md px-4 transition-all ${
-                mainTab === "mahasiswa"
-                  ? "bg-background text-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground hover:bg-transparent"
-              }`}
-            >
-              Mahasiswa
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setMainTab("validator")}
-              className={`rounded-md px-4 transition-all ${
-                mainTab === "validator"
-                  ? "bg-background text-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground hover:bg-transparent"
-              }`}
-            >
-              Validator
-            </Button>
-          </div>
-
-          {/* Tab Menu: Data Mentah vs Visualisasi (only for Mahasiswa) */}
-          {mainTab === "mahasiswa" && (
-            <div className="flex gap-6">
-              <button
-                onClick={() => setSubTab("data-mentah")}
-                className={`pb-1 text-sm font-medium transition-colors relative ${
-                  subTab === "data-mentah"
-                    ? "text-primary"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                Data Mentah
-                {subTab === "data-mentah" && (
-                  <span className="absolute -bottom-3 left-0 right-0 h-0.5 bg-primary rounded-t" />
-                )}
-              </button>
-              <button
-                onClick={() => setSubTab("visualisasi")}
-                className={`pb-1 text-sm font-medium transition-colors relative ${
-                  subTab === "visualisasi"
-                    ? "text-primary"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                Visualisasi
-                {subTab === "visualisasi" && (
-                  <span className="absolute -bottom-3 left-0 right-0 h-0.5 bg-primary rounded-t" />
-                )}
-              </button>
-            </div>
-          )}
+        {/* Button Group: Mahasiswa vs Validator */}
+        <div className="inline-flex p-1 rounded-lg bg-muted/60 border border-border/50">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setMainTab("mahasiswa")}
+            className={`rounded-md px-4 transition-all ${
+              mainTab === "mahasiswa"
+                ? "bg-background text-foreground shadow-sm"
+                : "text-muted-foreground hover:text-foreground hover:bg-transparent"
+            }`}
+          >
+            Mahasiswa
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setMainTab("validator")}
+            className={`rounded-md px-4 transition-all ${
+              mainTab === "validator"
+                ? "bg-background text-foreground shadow-sm"
+                : "text-muted-foreground hover:text-foreground hover:bg-transparent"
+            }`}
+          >
+            Validator
+          </Button>
         </div>
+
+        {/* Tab Menu: Data Mentah vs Visualisasi (only for Mahasiswa) */}
+        {mainTab === "mahasiswa" && (
+          <div className="flex gap-6 border-b border-border">
+            <button
+              onClick={() => setSubTab("data-mentah")}
+              className={`pb-3 text-sm font-medium transition-colors relative ${
+                subTab === "data-mentah"
+                  ? "text-primary"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              Data Mentah
+              {subTab === "data-mentah" && (
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-t" />
+              )}
+            </button>
+            <button
+              onClick={() => setSubTab("visualisasi")}
+              className={`pb-3 text-sm font-medium transition-colors relative ${
+                subTab === "visualisasi"
+                  ? "text-primary"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              Visualisasi
+              {subTab === "visualisasi" && (
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-t" />
+              )}
+            </button>
+          </div>
+        )}
 
         {/* Content based on main tab */}
         {mainTab === "mahasiswa" ? (
