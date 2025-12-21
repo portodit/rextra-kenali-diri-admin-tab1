@@ -7,7 +7,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { User, Briefcase, Calendar, Hash, Award, MessageSquare, AlertTriangle, Star } from "lucide-react";
+import { User, Award, MessageSquare, AlertTriangle, Star, Target, Brain, TrendingUp } from "lucide-react";
 
 interface ExpertFeedback {
   id: string;
@@ -57,163 +57,225 @@ export function ExpertDetailDrawer({ open, onOpenChange, feedback }: ExpertDetai
     }
   };
 
+  const formatPendidikan = (pendidikan?: string) => {
+    switch (pendidikan) {
+      case "S1":
+        return "Sarjana (S1)";
+      case "S2":
+        return "Magister (S2)";
+      case "S3":
+        return "Doktor (S3)";
+      case "D3":
+        return "Diploma III (D3)";
+      case "D4":
+        return "Diploma IV (D4)";
+      default:
+        return pendidikan || "-";
+    }
+  };
+
+  const formatPengalaman = (tahun?: number) => {
+    if (!tahun) return "-";
+    if (tahun < 3) return `${tahun} tahun (< 3 tahun)`;
+    if (tahun <= 5) return `${tahun} tahun (3–5 tahun)`;
+    if (tahun <= 10) return `${tahun} tahun (6–10 tahun)`;
+    return `${tahun} tahun (> 10 tahun)`;
+  };
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="w-full sm:max-w-lg">
-        <SheetHeader className="pb-4">
-          <SheetTitle className="text-lg font-semibold">Detail Feedback Expert</SheetTitle>
-        </SheetHeader>
+      <SheetContent className="w-full sm:max-w-lg p-0 flex flex-col h-full">
+        {/* Sticky Header */}
+        <div className="sticky top-0 z-10 bg-background border-b border-border">
+          <SheetHeader className="p-6 pb-4">
+            <SheetTitle className="text-lg font-semibold text-foreground">
+              Detail Feedback Expert
+            </SheetTitle>
+          </SheetHeader>
+          <Separator />
+        </div>
 
-        <ScrollArea className="h-[calc(100vh-100px)] pr-4">
-          <div className="space-y-6">
-            {/* Identity Section */}
-            <div className="space-y-3">
+        <ScrollArea className="flex-1 px-6 py-4">
+          <div className="space-y-6 pb-6">
+            {/* Section 1: Identitas Responden */}
+            <div className="rounded-lg border border-border bg-card p-4 space-y-4">
               <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
                 <User className="h-4 w-4 text-primary" />
-                Identitas Respons
+                Identitas Responden
               </h3>
-              <div className="grid grid-cols-2 gap-3 text-sm">
+              
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                {/* ID Feedback */}
                 <div className="space-y-1">
-                  <p className="text-muted-foreground text-xs">ID Feedback</p>
-                  <p className="font-mono text-foreground">{feedback.id}</p>
+                  <p className="text-xs text-muted-foreground">ID Feedback</p>
+                  <p className="font-mono font-medium text-foreground">{feedback.id}</p>
                 </div>
+                
+                {/* Tanggal */}
                 <div className="space-y-1">
-                  <p className="text-muted-foreground text-xs">Tanggal</p>
+                  <p className="text-xs text-muted-foreground">Tanggal</p>
                   <p className="text-foreground">{feedback.tanggal}</p>
                 </div>
+                
+                {/* Nama Expert */}
                 <div className="space-y-1">
-                  <p className="text-muted-foreground text-xs">Nama Expert</p>
+                  <p className="text-xs text-muted-foreground">Nama Expert</p>
                   <p className="font-medium text-foreground">{feedback.nama}</p>
                 </div>
+                
+                {/* Profesi */}
                 <div className="space-y-1">
-                  <p className="text-muted-foreground text-xs">Profesi</p>
+                  <p className="text-xs text-muted-foreground">Profesi</p>
                   <p className="text-foreground">{feedback.profesi}</p>
                 </div>
-                {feedback.gelar && (
-                  <div className="space-y-1">
-                    <p className="text-muted-foreground text-xs">Gelar</p>
-                    <p className="text-foreground">{feedback.gelar}</p>
-                  </div>
-                )}
-                {feedback.pengalamanTahun && (
-                  <div className="space-y-1">
-                    <p className="text-muted-foreground text-xs">Pengalaman</p>
-                    <p className="text-foreground">{feedback.pengalamanTahun} tahun</p>
-                  </div>
-                )}
-                {feedback.pendidikanTerakhir && (
-                  <div className="space-y-1">
-                    <p className="text-muted-foreground text-xs">Pendidikan Terakhir</p>
-                    <p className="text-foreground">{feedback.pendidikanTerakhir}</p>
-                  </div>
-                )}
-                {feedback.perguruanTinggi && (
-                  <div className="space-y-1">
-                    <p className="text-muted-foreground text-xs">Perguruan Tinggi</p>
-                    <p className="text-foreground">{feedback.perguruanTinggi}</p>
-                  </div>
-                )}
-                {feedback.programStudi && (
-                  <div className="space-y-1 col-span-2">
-                    <p className="text-muted-foreground text-xs">Program Studi</p>
-                    <p className="text-foreground">{feedback.programStudi}</p>
-                  </div>
-                )}
+                
+                {/* Gelar */}
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground">Gelar</p>
+                  <p className="text-foreground">{feedback.gelar || "-"}</p>
+                </div>
+                
+                {/* Pengalaman */}
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground">Pengalaman</p>
+                  <Badge variant="secondary" className="font-normal">
+                    {formatPengalaman(feedback.pengalamanTahun)}
+                  </Badge>
+                </div>
+                
+                {/* Pendidikan Terakhir */}
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground">Pendidikan Terakhir</p>
+                  <Badge variant="secondary" className="font-normal">
+                    {formatPendidikan(feedback.pendidikanTerakhir)}
+                  </Badge>
+                </div>
+                
+                {/* Perguruan Tinggi */}
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground">Perguruan Tinggi</p>
+                  <p className="text-foreground">{feedback.perguruanTinggi || "-"}</p>
+                </div>
+                
+                {/* Program Studi - Full Width */}
                 <div className="space-y-1 col-span-2">
-                  <p className="text-muted-foreground text-xs">Kategori Tes</p>
-                  <Badge variant="outline">{feedback.kategoriTes}</Badge>
+                  <p className="text-xs text-muted-foreground">Program Studi</p>
+                  <p className="text-foreground">{feedback.programStudi || "-"}</p>
+                </div>
+                
+                {/* Kategori Tes - Full Width with Badge */}
+                <div className="space-y-1 col-span-2">
+                  <p className="text-xs text-muted-foreground">Kategori Tes</p>
+                  <Badge variant="outline" className="bg-primary/5 border-primary/20 text-primary">
+                    {feedback.kategoriTes}
+                  </Badge>
                 </div>
               </div>
             </div>
 
-            <Separator />
-
-            {/* Top 5 Recommendations */}
-            <div className="space-y-3">
-              <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
-                <Award className="h-4 w-4 text-primary" />
-                5 Rekomendasi Profesi Teratas
-              </h3>
+            {/* Section 2: 5 Rekomendasi Profesi Teratas */}
+            <div className="rounded-lg border border-border bg-card p-4 space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                  <Award className="h-4 w-4 text-primary" />
+                  5 Rekomendasi Profesi Teratas
+                </h3>
+                <Badge className={`${getTopNColor(feedback.topNStatus)} font-medium`}>
+                  {feedback.topNStatus}
+                </Badge>
+              </div>
+              
               <div className="space-y-2">
                 {feedback.top5Recommendations.map((rec, index) => (
                   <div 
                     key={index} 
-                    className="flex items-center gap-3 p-2 rounded-lg bg-muted/30 border border-border/50"
+                    className="flex items-center gap-3 p-2.5 rounded-lg bg-muted/30 border border-border/50 hover:bg-muted/50 transition-colors"
                   >
-                    <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-semibold">
+                    <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-semibold shrink-0">
                       {index + 1}
                     </span>
                     <span className="text-sm text-foreground">{rec}</span>
                   </div>
                 ))}
               </div>
-              <div className="flex items-center gap-2 mt-3">
-                <span className="text-sm text-muted-foreground">Status Top 5:</span>
-                <Badge className={getTopNColor(feedback.topNStatus)}>
-                  {feedback.topNStatus}
-                </Badge>
-              </div>
             </div>
 
-            <Separator />
-
-            {/* Likert Scores */}
-            <div className="space-y-3">
+            {/* Section 3: Penilaian Likert (1-7) */}
+            <div className="rounded-lg border border-border bg-card p-4 space-y-4">
               <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
                 <Star className="h-4 w-4 text-primary" />
-                Penilaian Likert (1-7)
+                Penilaian Likert (1–7)
               </h3>
+              
               <div className="grid grid-cols-3 gap-3">
-                <div className="p-3 rounded-lg bg-muted/30 border border-border/50 text-center">
-                  <p className="text-xs text-muted-foreground mb-1">Akurasi Profil</p>
-                  <Badge className={`${getScoreColor(feedback.akurasi)} text-base`}>
+                {/* Akurasi Profil */}
+                <div className="p-3 rounded-lg bg-muted/30 border border-border/50 text-center space-y-2">
+                  <div className="flex items-center justify-center gap-1.5 text-muted-foreground">
+                    <Target className="h-3.5 w-3.5" />
+                    <p className="text-xs">Akurasi Profil</p>
+                  </div>
+                  <Badge className={`${getScoreColor(feedback.akurasi)} text-sm font-semibold px-3 py-1`}>
                     {feedback.akurasi}/7
                   </Badge>
                 </div>
-                <div className="p-3 rounded-lg bg-muted/30 border border-border/50 text-center">
-                  <p className="text-xs text-muted-foreground mb-1">Logika Penjelasan</p>
-                  <Badge className={`${getScoreColor(feedback.logika)} text-base`}>
+                
+                {/* Logika Penjelasan */}
+                <div className="p-3 rounded-lg bg-muted/30 border border-border/50 text-center space-y-2">
+                  <div className="flex items-center justify-center gap-1.5 text-muted-foreground">
+                    <Brain className="h-3.5 w-3.5" />
+                    <p className="text-xs">Logika Penjelasan</p>
+                  </div>
+                  <Badge className={`${getScoreColor(feedback.logika)} text-sm font-semibold px-3 py-1`}>
                     {feedback.logika}/7
                   </Badge>
                 </div>
-                <div className="p-3 rounded-lg bg-muted/30 border border-border/50 text-center">
-                  <p className="text-xs text-muted-foreground mb-1">Potensi Manfaat</p>
-                  <Badge className={`${getScoreColor(feedback.manfaat)} text-base`}>
+                
+                {/* Potensi Manfaat */}
+                <div className="p-3 rounded-lg bg-muted/30 border border-border/50 text-center space-y-2">
+                  <div className="flex items-center justify-center gap-1.5 text-muted-foreground">
+                    <TrendingUp className="h-3.5 w-3.5" />
+                    <p className="text-xs">Potensi Manfaat</p>
+                  </div>
+                  <Badge className={`${getScoreColor(feedback.manfaat)} text-sm font-semibold px-3 py-1`}>
                     {feedback.manfaat}/7
                   </Badge>
                 </div>
               </div>
             </div>
 
-            <Separator />
-
-            {/* Kendala */}
-            <div className="space-y-3">
+            {/* Section 4: Kendala yang Dilaporkan */}
+            <div className="rounded-lg border border-border bg-card p-4 space-y-4">
               <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
                 <AlertTriangle className="h-4 w-4 text-primary" />
                 Kendala yang Dilaporkan
               </h3>
+              
               {feedback.kendala.length > 0 ? (
                 <div className="flex flex-wrap gap-2">
                   {feedback.kendala.map((k, i) => (
-                    <Badge key={i} variant="secondary" className="text-xs">
+                    <Badge 
+                      key={i} 
+                      variant="secondary" 
+                      className="text-xs bg-destructive/10 text-destructive border-destructive/20 hover:bg-destructive/15"
+                    >
                       {k}
                     </Badge>
                   ))}
                 </div>
               ) : (
-                <p className="text-sm text-muted-foreground italic">Tidak ada kendala dilaporkan</p>
+                <p className="text-sm text-muted-foreground italic">
+                  Tidak ada kendala dilaporkan
+                </p>
               )}
             </div>
 
-            <Separator />
-
-            {/* Masukan */}
-            <div className="space-y-3">
+            {/* Section 5: Masukan / Saran Perbaikan */}
+            <div className="rounded-lg border border-border bg-card p-4 space-y-4">
               <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
                 <MessageSquare className="h-4 w-4 text-primary" />
                 Masukan / Saran Perbaikan
               </h3>
+              
               {feedback.masukan ? (
                 <div className="p-3 rounded-lg bg-muted/30 border border-border/50">
                   <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">
@@ -221,7 +283,9 @@ export function ExpertDetailDrawer({ open, onOpenChange, feedback }: ExpertDetai
                   </p>
                 </div>
               ) : (
-                <p className="text-sm text-muted-foreground italic">Tidak ada masukan</p>
+                <p className="text-sm text-muted-foreground italic">
+                  Tidak ada masukan tertulis.
+                </p>
               )}
             </div>
           </div>
