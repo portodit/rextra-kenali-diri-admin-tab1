@@ -34,6 +34,7 @@ import {
 } from "lucide-react";
 import { ExportDataDialog } from "@/components/ExportDataDialog";
 import { MahasiswaVisualization } from "@/components/MahasiswaVisualization";
+import { ExpertVisualization } from "@/components/ExpertVisualization";
 import { ExpertDetailDrawer } from "@/components/ExpertDetailDrawer";
 
 // Mock data for Mahasiswa feedback (Likert 1-7)
@@ -307,6 +308,9 @@ export default function UmpanBalik() {
   
   // Sub tab for Mahasiswa: Data Mentah vs Visualisasi
   const [subTab, setSubTab] = useState<"data-mentah" | "visualisasi">("data-mentah");
+  
+  // Sub tab for Expert: Data Mentah vs Visualisasi
+  const [expertSubTab, setExpertSubTab] = useState<"data-mentah" | "visualisasi">("data-mentah");
   
   // Category dropdown state
   const [selectedCategory, setSelectedCategory] = useState("tes-profil-karier");
@@ -836,201 +840,241 @@ export default function UmpanBalik() {
         ) : (
           // Expert Tab Content
           <div className="space-y-6">
-            {/* Filter & Search Section for Expert */}
-            <Card>
-              <CardHeader className="pb-4">
-                <CardTitle className="text-base font-semibold">
-                  Kontrol & Pencarian Data
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-col md:flex-row gap-3">
-                  {/* Category Dropdown */}
-                  <Select
-                    value={expertCategory}
-                    onValueChange={setExpertCategory}
-                  >
-                    <SelectTrigger className="w-full md:w-[200px]">
-                      <SelectValue placeholder="Pilih Kategori" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="tes-profil-karier">Tes Profil Karier</SelectItem>
-                      <SelectItem value="tes-riasec">Tes RIASEC</SelectItem>
-                      <SelectItem value="tes-kepribadian">Tes Kepribadian</SelectItem>
-                    </SelectContent>
-                  </Select>
+            {/* Tab Menu: Data Mentah vs Visualisasi for Expert */}
+            <div className="flex gap-6 border-b border-border">
+              <button
+                onClick={() => setExpertSubTab("data-mentah")}
+                className={`pb-3 text-sm font-medium transition-colors relative ${
+                  expertSubTab === "data-mentah"
+                    ? "text-primary"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                Data Mentah
+                {expertSubTab === "data-mentah" && (
+                  <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-t" />
+                )}
+              </button>
+              <button
+                onClick={() => setExpertSubTab("visualisasi")}
+                className={`pb-3 text-sm font-medium transition-colors relative ${
+                  expertSubTab === "visualisasi"
+                    ? "text-primary"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                Visualisasi
+                {expertSubTab === "visualisasi" && (
+                  <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-t" />
+                )}
+              </button>
+            </div>
 
-                  {/* Search Bar */}
-                  <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      placeholder="Ketik nama expert…"
-                      className="pl-10"
-                      value={expertSearchQuery}
-                      onChange={(e) => handleExpertSearchChange(e.target.value)}
-                    />
-                  </div>
-                  
-                  {/* Sort Dropdown */}
-                  <Select
-                    value={expertSortOption}
-                    onValueChange={(value) => handleExpertSortChange(value as SortOption)}
-                  >
-                    <SelectTrigger className="w-full md:w-[180px]">
-                      <SelectValue placeholder="Urutkan" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="name-asc">Nama A–Z</SelectItem>
-                      <SelectItem value="name-desc">Nama Z–A</SelectItem>
-                      <SelectItem value="newest">Feedback terbaru</SelectItem>
-                      <SelectItem value="oldest">Feedback terlama</SelectItem>
-                    </SelectContent>
-                  </Select>
+            {expertSubTab === "data-mentah" ? (
+              <>
+                {/* Filter & Search Section for Expert */}
+                <Card>
+                  <CardHeader className="pb-4">
+                    <CardTitle className="text-base font-semibold">
+                      Kontrol & Pencarian Data
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex flex-col md:flex-row gap-3">
+                      {/* Category Dropdown */}
+                      <Select
+                        value={expertCategory}
+                        onValueChange={setExpertCategory}
+                      >
+                        <SelectTrigger className="w-full md:w-[200px]">
+                          <SelectValue placeholder="Pilih Kategori" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="tes-profil-karier">Tes Profil Karier</SelectItem>
+                          <SelectItem value="tes-riasec">Tes RIASEC</SelectItem>
+                          <SelectItem value="tes-kepribadian">Tes Kepribadian</SelectItem>
+                        </SelectContent>
+                      </Select>
 
-                  {/* Top N Filter */}
-                  <Select
-                    value={expertTopNFilter}
-                    onValueChange={(value) => handleExpertTopNChange(value as TopNFilter)}
-                  >
-                    <SelectTrigger className="w-full md:w-[160px]">
-                      <SelectValue placeholder="Status Top 5" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Semua</SelectItem>
-                      <SelectItem value="P1">Muncul di P1</SelectItem>
-                      <SelectItem value="P2">Muncul di P2</SelectItem>
-                      <SelectItem value="P3-5">Muncul di P3–5</SelectItem>
-                      <SelectItem value="Tidak muncul">Tidak muncul</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </CardContent>
-            </Card>
+                      {/* Search Bar */}
+                      <div className="relative flex-1">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input
+                          placeholder="Ketik nama expert…"
+                          className="pl-10"
+                          value={expertSearchQuery}
+                          onChange={(e) => handleExpertSearchChange(e.target.value)}
+                        />
+                      </div>
+                      
+                      {/* Sort Dropdown */}
+                      <Select
+                        value={expertSortOption}
+                        onValueChange={(value) => handleExpertSortChange(value as SortOption)}
+                      >
+                        <SelectTrigger className="w-full md:w-[180px]">
+                          <SelectValue placeholder="Urutkan" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="name-asc">Nama A–Z</SelectItem>
+                          <SelectItem value="name-desc">Nama Z–A</SelectItem>
+                          <SelectItem value="newest">Feedback terbaru</SelectItem>
+                          <SelectItem value="oldest">Feedback terlama</SelectItem>
+                        </SelectContent>
+                      </Select>
 
-            {/* Expert Data Table */}
-            <Card>
-              <CardContent className="pt-6">
-                <div className="overflow-x-auto -mx-4 md:mx-0">
-                  <div className="min-w-[900px] px-4 md:px-0">
-                    <Table>
-                      <TableHeader>
-                        <TableRow className="bg-muted/50">
-                          <TableHead className="w-[100px]">ID Feedback</TableHead>
-                          <TableHead className="min-w-[120px]">Nama Expert</TableHead>
-                          <TableHead className="min-w-[120px]">Profesi</TableHead>
-                          <TableHead className="text-center">Top 5</TableHead>
-                          <TableHead className="text-center">Akurasi</TableHead>
-                          <TableHead className="text-center">Logika</TableHead>
-                          <TableHead className="text-center">Manfaat</TableHead>
-                          <TableHead className="min-w-[150px]">Kendala</TableHead>
-                          <TableHead>Tanggal</TableHead>
-                          <TableHead className="text-center w-[80px]">Aksi</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {paginatedExpertData.map((feedback) => (
-                          <TableRow
-                            key={feedback.id}
-                            className="hover:bg-muted/30 transition-colors"
-                          >
-                            <TableCell className="font-mono text-sm text-muted-foreground">
-                              {feedback.id}
-                            </TableCell>
-                            <TableCell className="font-medium">
-                              {feedback.nama}
-                            </TableCell>
-                            <TableCell className="text-muted-foreground">
-                              {feedback.profesi}
-                            </TableCell>
-                            <TableCell className="text-center">
-                              <TopNBadge status={feedback.topNStatus} />
-                            </TableCell>
-                            <TableCell className="text-center">
-                              <ScoreBadge score={feedback.akurasi} />
-                            </TableCell>
-                            <TableCell className="text-center">
-                              <ScoreBadge score={feedback.logika} />
-                            </TableCell>
-                            <TableCell className="text-center">
-                              <ScoreBadge score={feedback.manfaat} />
-                            </TableCell>
-                            <TableCell>
-                              <KendalaChips kendala={feedback.kendala} />
-                            </TableCell>
-                            <TableCell className="text-muted-foreground text-sm">
-                              {feedback.tanggal}
-                            </TableCell>
-                            <TableCell className="text-center">
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => {
-                                  setSelectedExpertFeedback(feedback);
-                                  setIsExpertDetailOpen(true);
-                                }}
-                                className="hover:bg-primary/10 hover:text-primary"
+                      {/* Top N Filter */}
+                      <Select
+                        value={expertTopNFilter}
+                        onValueChange={(value) => handleExpertTopNChange(value as TopNFilter)}
+                      >
+                        <SelectTrigger className="w-full md:w-[160px]">
+                          <SelectValue placeholder="Status Top 5" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">Semua</SelectItem>
+                          <SelectItem value="P1">Muncul di P1</SelectItem>
+                          <SelectItem value="P2">Muncul di P2</SelectItem>
+                          <SelectItem value="P3-5">Muncul di P3–5</SelectItem>
+                          <SelectItem value="Tidak muncul">Tidak muncul</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Expert Data Table */}
+                <Card>
+                  <CardContent className="pt-6">
+                    <div className="overflow-x-auto -mx-4 md:mx-0">
+                      <div className="min-w-[900px] px-4 md:px-0">
+                        <Table>
+                          <TableHeader>
+                            <TableRow className="bg-muted/50">
+                              <TableHead className="w-[100px]">ID Feedback</TableHead>
+                              <TableHead className="min-w-[120px]">Nama Expert</TableHead>
+                              <TableHead className="min-w-[120px]">Profesi</TableHead>
+                              <TableHead className="text-center">Top 5</TableHead>
+                              <TableHead className="text-center">Akurasi</TableHead>
+                              <TableHead className="text-center">Logika</TableHead>
+                              <TableHead className="text-center">Manfaat</TableHead>
+                              <TableHead className="min-w-[150px]">Kendala</TableHead>
+                              <TableHead>Tanggal</TableHead>
+                              <TableHead className="text-center w-[80px]">Aksi</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {paginatedExpertData.map((feedback) => (
+                              <TableRow
+                                key={feedback.id}
+                                className="hover:bg-muted/30 transition-colors"
                               >
-                                <Eye className="h-4 w-4 mr-1" />
-                                Detail
-                              </Button>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </div>
-                </div>
+                                <TableCell className="font-mono text-sm text-muted-foreground">
+                                  {feedback.id}
+                                </TableCell>
+                                <TableCell className="font-medium">
+                                  {feedback.nama}
+                                </TableCell>
+                                <TableCell className="text-muted-foreground">
+                                  {feedback.profesi}
+                                </TableCell>
+                                <TableCell className="text-center">
+                                  <TopNBadge status={feedback.topNStatus} />
+                                </TableCell>
+                                <TableCell className="text-center">
+                                  <ScoreBadge score={feedback.akurasi} />
+                                </TableCell>
+                                <TableCell className="text-center">
+                                  <ScoreBadge score={feedback.logika} />
+                                </TableCell>
+                                <TableCell className="text-center">
+                                  <ScoreBadge score={feedback.manfaat} />
+                                </TableCell>
+                                <TableCell>
+                                  <KendalaChips kendala={feedback.kendala} />
+                                </TableCell>
+                                <TableCell className="text-muted-foreground text-sm">
+                                  {feedback.tanggal}
+                                </TableCell>
+                                <TableCell className="text-center">
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => {
+                                      setSelectedExpertFeedback(feedback);
+                                      setIsExpertDetailOpen(true);
+                                    }}
+                                    className="hover:bg-primary/10 hover:text-primary"
+                                  >
+                                    <Eye className="h-4 w-4 mr-1" />
+                                    Detail
+                                  </Button>
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </div>
+                    </div>
 
-                {/* Pagination for Expert */}
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6 pt-4 border-t">
-                  <div className="flex items-center gap-3 order-2 sm:order-1">
-                    <span className="text-sm text-muted-foreground">Rows per page:</span>
-                    <Select
-                      value={expertRowsPerPage.toString()}
-                      onValueChange={(value) => {
-                        setExpertRowsPerPage(Number(value));
-                        setExpertCurrentPage(1);
-                      }}
-                    >
-                      <SelectTrigger className="w-[80px] h-8">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="25">25</SelectItem>
-                        <SelectItem value="50">50</SelectItem>
-                        <SelectItem value="100">100</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <span className="text-sm text-muted-foreground">
-                      Menampilkan {paginatedExpertData.length} dari {expertTotalDataCount.toLocaleString("id-ID")} data
-                    </span>
-                  </div>
-                  
-                  <div className="flex items-center gap-2 order-1 sm:order-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      disabled={expertCurrentPage === 1}
-                      onClick={() => setExpertCurrentPage((p) => p - 1)}
-                      className="gap-1"
-                    >
-                      <ChevronLeft className="h-4 w-4" />
-                      Previous
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      disabled={expertCurrentPage === expertTotalPages || expertTotalPages === 0}
-                      onClick={() => setExpertCurrentPage((p) => p + 1)}
-                      className="gap-1"
-                    >
-                      Next
-                      <ChevronRight className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                    {/* Pagination for Expert */}
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6 pt-4 border-t">
+                      <div className="flex items-center gap-3 order-2 sm:order-1">
+                        <span className="text-sm text-muted-foreground">Rows per page:</span>
+                        <Select
+                          value={expertRowsPerPage.toString()}
+                          onValueChange={(value) => {
+                            setExpertRowsPerPage(Number(value));
+                            setExpertCurrentPage(1);
+                          }}
+                        >
+                          <SelectTrigger className="w-[80px] h-8">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="25">25</SelectItem>
+                            <SelectItem value="50">50</SelectItem>
+                            <SelectItem value="100">100</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <span className="text-sm text-muted-foreground">
+                          Menampilkan {paginatedExpertData.length} dari {expertTotalDataCount.toLocaleString("id-ID")} data
+                        </span>
+                      </div>
+                      
+                      <div className="flex items-center gap-2 order-1 sm:order-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          disabled={expertCurrentPage === 1}
+                          onClick={() => setExpertCurrentPage((p) => p - 1)}
+                          className="gap-1"
+                        >
+                          <ChevronLeft className="h-4 w-4" />
+                          Previous
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          disabled={expertCurrentPage === expertTotalPages || expertTotalPages === 0}
+                          onClick={() => setExpertCurrentPage((p) => p + 1)}
+                          className="gap-1"
+                        >
+                          Next
+                          <ChevronRight className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </>
+            ) : (
+              // Expert Visualisasi Tab
+              <ExpertVisualization 
+                selectedCategory={expertCategory} 
+                onCategoryChange={setExpertCategory} 
+              />
+            )}
           </div>
         )}
       </div>
