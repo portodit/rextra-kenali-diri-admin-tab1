@@ -180,38 +180,37 @@ export function MahasiswaVisualization({ selectedCategory, onCategoryChange }: M
     const isPositive = trendNumber >= 0;
 
     return (
-      <Card className="border border-border/60 rounded-xl p-4 md:p-5">
-        <div className="flex justify-between items-start">
-          <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <div className="p-2 rounded-lg bg-primary/10">
-                <Icon className="h-4 w-4 text-primary" />
-              </div>
-              <span className="text-sm text-muted-foreground font-medium">{title}</span>
+      <Card className="border border-border/60 rounded-xl p-4 md:p-5 relative overflow-hidden">
+        <div className="relative z-10 space-y-3">
+          <div className="flex items-center gap-2">
+            <div className="p-2 rounded-lg bg-primary/10">
+              <Icon className="h-4 w-4 text-primary" />
             </div>
-            <div className="space-y-1">
-              <p className="text-2xl md:text-3xl font-bold text-foreground">{value}</p>
-              <div className={`flex items-center gap-1 text-xs ${isPositive ? "text-success" : "text-destructive"}`}>
-                {isPositive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
-                <span>
-                  {isPositive ? "Naik" : "Turun"} {Math.abs(trendNumber)}% dibanding periode sebelumnya
-                </span>
-              </div>
+            <span className="text-sm text-muted-foreground font-bold">{title}</span>
+          </div>
+          <div className="space-y-1">
+            <p className="text-2xl md:text-3xl font-bold text-foreground">{value}</p>
+            <div className={`flex items-center gap-1 text-xs ${isPositive ? "text-success" : "text-destructive"}`}>
+              {isPositive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
+              <span>
+                {isPositive ? "Naik" : "Turun"} {Math.abs(trendNumber)}% dibanding minggu lalu
+              </span>
             </div>
           </div>
-          <div className="w-20 h-12">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={trendData} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
-                <Area 
-                  type="monotone" 
-                  dataKey="value" 
-                  stroke={isPositive ? "hsl(var(--success))" : "hsl(var(--destructive))"} 
-                  fill={isPositive ? "hsl(var(--success) / 0.2)" : "hsl(var(--destructive) / 0.2)"} 
-                  strokeWidth={2}
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
+        </div>
+        {/* Mini chart positioned at bottom right */}
+        <div className="absolute bottom-0 right-0 w-28 h-16 opacity-60">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={trendData} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
+              <Area 
+                type="monotone" 
+                dataKey="value" 
+                stroke={isPositive ? "hsl(var(--success))" : "hsl(var(--destructive))"} 
+                fill={isPositive ? "hsl(var(--success) / 0.3)" : "hsl(var(--destructive) / 0.3)"} 
+                strokeWidth={2}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
         </div>
       </Card>
     );
