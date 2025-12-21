@@ -191,7 +191,7 @@ export default function UmpanBalik() {
   const [subTab, setSubTab] = useState<"data-mentah" | "visualisasi">("data-mentah");
   
   // Category dropdown state
-  const [selectedCategory, setSelectedCategory] = useState("tes-riasec");
+  const [selectedCategory, setSelectedCategory] = useState("tes-profil-karier");
   
   // Filter & search states
   const [searchQuery, setSearchQuery] = useState("");
@@ -432,27 +432,25 @@ export default function UmpanBalik() {
                     </CardTitle>
                   </CardHeader>
                 <CardContent>
-                    <div className="flex flex-col gap-4">
+                    <div className="flex flex-col md:flex-row gap-3">
                       {/* Category Dropdown */}
-                      <div className="flex flex-col md:flex-row gap-3">
-                        <Select
-                          value={selectedCategory}
-                          onValueChange={setSelectedCategory}
-                        >
-                          <SelectTrigger className="w-full md:w-[250px]">
-                            <SelectValue placeholder="Pilih Kategori" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="tes-riasec">Tes RIASEC</SelectItem>
-                            <SelectItem value="tes-profil-karier">Tes Profil Karier</SelectItem>
-                            <SelectItem value="tes-kepribadian">Tes Kepribadian</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
+                      <Select
+                        value={selectedCategory}
+                        onValueChange={setSelectedCategory}
+                      >
+                        <SelectTrigger className="w-full md:w-[200px]">
+                          <SelectValue placeholder="Pilih Kategori" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="tes-profil-karier">Tes Profil Karier</SelectItem>
+                          <SelectItem value="tes-riasec">Tes RIASEC</SelectItem>
+                          <SelectItem value="tes-kepribadian">Tes Kepribadian</SelectItem>
+                        </SelectContent>
+                      </Select>
 
                       {/* Search and Filter Controls - Only show when "Tes Profil Karier" selected */}
                       {selectedCategory === "tes-profil-karier" && (
-                        <div className="flex flex-col md:flex-row gap-3">
+                        <>
                           {/* Search Bar */}
                           <div className="relative flex-1">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -494,7 +492,7 @@ export default function UmpanBalik() {
                               <SelectItem value="has-kendala">Ada kendala</SelectItem>
                             </SelectContent>
                           </Select>
-                        </div>
+                        </>
                       )}
                     </div>
                   </CardContent>
