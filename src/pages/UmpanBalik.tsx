@@ -190,6 +190,9 @@ export default function UmpanBalik() {
   // Sub tab for Mahasiswa: Data Mentah vs Visualisasi
   const [subTab, setSubTab] = useState<"data-mentah" | "visualisasi">("data-mentah");
   
+  // Category dropdown state
+  const [selectedCategory, setSelectedCategory] = useState("tes-riasec");
+  
   // Filter & search states
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOption, setSortOption] = useState<SortOption>("newest");
@@ -428,160 +431,184 @@ export default function UmpanBalik() {
                       Kontrol & Pencarian Data
                     </CardTitle>
                   </CardHeader>
-                  <CardContent>
-                    <div className="flex flex-col md:flex-row gap-3">
-                      {/* Search Bar */}
-                      <div className="relative flex-1">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          placeholder="Ketik nama pengguna…"
-                          className="pl-10"
-                          value={searchQuery}
-                          onChange={(e) => handleSearchChange(e.target.value)}
-                        />
-                      </div>
-                      
-                      {/* Sort Dropdown */}
-                      <Select
-                        value={sortOption}
-                        onValueChange={(value) => handleSortChange(value as SortOption)}
-                      >
-                        <SelectTrigger className="w-full md:w-[200px]">
-                          <SelectValue placeholder="Urutkan" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="name-asc">Nama pengguna A–Z</SelectItem>
-                          <SelectItem value="name-desc">Nama pengguna Z–A</SelectItem>
-                          <SelectItem value="newest">Feedback terbaru</SelectItem>
-                          <SelectItem value="oldest">Feedback terlama</SelectItem>
-                        </SelectContent>
-                      </Select>
-
-                      {/* Kendala Filter */}
-                      <Select
-                        value={kendalaFilter}
-                        onValueChange={(value) => handleKendalaChange(value as KendalaFilter)}
-                      >
-                        <SelectTrigger className="w-full md:w-[180px]">
-                          <SelectValue placeholder="Kendala" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="all">Semua</SelectItem>
-                          <SelectItem value="no-kendala">Tidak ada kendala</SelectItem>
-                          <SelectItem value="has-kendala">Ada kendala</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Data Table */}
-                <Card>
-                  <CardContent className="pt-6">
-                    <div className="overflow-x-auto -mx-4 md:mx-0">
-                      <div className="min-w-[700px] px-4 md:px-0">
-                        <Table>
-                          <TableHeader>
-                            <TableRow className="bg-muted/50">
-                              <TableHead className="w-[100px]">ID Feedback</TableHead>
-                              <TableHead className="min-w-[150px]">Pengguna</TableHead>
-                              <TableHead className="text-center">Kemudahan Tes</TableHead>
-                              <TableHead className="text-center">Relevansi Rekomendasi</TableHead>
-                              <TableHead className="text-center">Kepuasan Fitur</TableHead>
-                              <TableHead className="min-w-[200px]">Daftar Kendala</TableHead>
-                              <TableHead className="text-center w-[80px]">Aksi</TableHead>
-                            </TableRow>
-                          </TableHeader>
-                          <TableBody>
-                            {paginatedData.map((feedback) => (
-                              <TableRow
-                                key={feedback.id}
-                                className="hover:bg-muted/30 transition-colors"
-                              >
-                                <TableCell className="font-mono text-sm text-muted-foreground">
-                                  {feedback.id}
-                                </TableCell>
-                                <TableCell className="font-medium">
-                                  {feedback.userName}
-                                </TableCell>
-                                <TableCell className="text-center">
-                                  <ScoreBadge score={feedback.kemudahanTes} />
-                                </TableCell>
-                                <TableCell className="text-center">
-                                  <ScoreBadge score={feedback.relevansiRekomendasi} />
-                                </TableCell>
-                                <TableCell className="text-center">
-                                  <ScoreBadge score={feedback.kepuasanFitur} />
-                                </TableCell>
-                                <TableCell>
-                                  <KendalaChips kendala={feedback.kendala} />
-                                </TableCell>
-                                <TableCell className="text-center">
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="hover:bg-primary/10 hover:text-primary"
-                                  >
-                                    <Eye className="h-4 w-4" />
-                                  </Button>
-                                </TableCell>
-                              </TableRow>
-                            ))}
-                          </TableBody>
-                        </Table>
-                      </div>
-                    </div>
-
-                    {/* Pagination */}
-                    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6 pt-4 border-t">
-                      <div className="flex items-center gap-3 order-2 sm:order-1">
-                        <span className="text-sm text-muted-foreground">Rows per page:</span>
+                <CardContent>
+                    <div className="flex flex-col gap-4">
+                      {/* Category Dropdown */}
+                      <div className="flex flex-col md:flex-row gap-3">
                         <Select
-                          value={rowsPerPage.toString()}
-                          onValueChange={(value) => {
-                            setRowsPerPage(Number(value));
-                            setCurrentPage(1);
-                          }}
+                          value={selectedCategory}
+                          onValueChange={setSelectedCategory}
                         >
-                          <SelectTrigger className="w-[80px] h-8">
-                            <SelectValue />
+                          <SelectTrigger className="w-full md:w-[250px]">
+                            <SelectValue placeholder="Pilih Kategori" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="25">25</SelectItem>
-                            <SelectItem value="50">50</SelectItem>
-                            <SelectItem value="100">100</SelectItem>
+                            <SelectItem value="tes-riasec">Tes RIASEC</SelectItem>
+                            <SelectItem value="tes-profil-karier">Tes Profil Karier</SelectItem>
+                            <SelectItem value="tes-kepribadian">Tes Kepribadian</SelectItem>
                           </SelectContent>
                         </Select>
-                        <span className="text-sm text-muted-foreground">
-                          Menampilkan {paginatedData.length} dari {totalDataCount.toLocaleString("id-ID")} data
-                        </span>
                       </div>
-                      
-                      <div className="flex items-center gap-2 order-1 sm:order-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          disabled={currentPage === 1}
-                          onClick={() => setCurrentPage((p) => p - 1)}
-                          className="gap-1"
-                        >
-                          <ChevronLeft className="h-4 w-4" />
-                          Previous
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          disabled={currentPage === totalPages || totalPages === 0}
-                          onClick={() => setCurrentPage((p) => p + 1)}
-                          className="gap-1"
-                        >
-                          Next
-                          <ChevronRight className="h-4 w-4" />
-                        </Button>
-                      </div>
+
+                      {/* Search and Filter Controls - Only show when "Tes Profil Karier" selected */}
+                      {selectedCategory === "tes-profil-karier" && (
+                        <div className="flex flex-col md:flex-row gap-3">
+                          {/* Search Bar */}
+                          <div className="relative flex-1">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                            <Input
+                              placeholder="Ketik nama pengguna…"
+                              className="pl-10"
+                              value={searchQuery}
+                              onChange={(e) => handleSearchChange(e.target.value)}
+                            />
+                          </div>
+                          
+                          {/* Sort Dropdown */}
+                          <Select
+                            value={sortOption}
+                            onValueChange={(value) => handleSortChange(value as SortOption)}
+                          >
+                            <SelectTrigger className="w-full md:w-[200px]">
+                              <SelectValue placeholder="Urutkan" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="name-asc">Nama pengguna A–Z</SelectItem>
+                              <SelectItem value="name-desc">Nama pengguna Z–A</SelectItem>
+                              <SelectItem value="newest">Feedback terbaru</SelectItem>
+                              <SelectItem value="oldest">Feedback terlama</SelectItem>
+                            </SelectContent>
+                          </Select>
+
+                          {/* Kendala Filter */}
+                          <Select
+                            value={kendalaFilter}
+                            onValueChange={(value) => handleKendalaChange(value as KendalaFilter)}
+                          >
+                            <SelectTrigger className="w-full md:w-[180px]">
+                              <SelectValue placeholder="Kendala" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="all">Semua</SelectItem>
+                              <SelectItem value="no-kendala">Tidak ada kendala</SelectItem>
+                              <SelectItem value="has-kendala">Ada kendala</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      )}
                     </div>
                   </CardContent>
                 </Card>
+
+                {/* Data Table - Only show when "Tes Profil Karier" selected */}
+                {selectedCategory === "tes-profil-karier" && (
+                  <Card>
+                    <CardContent className="pt-6">
+                      <div className="overflow-x-auto -mx-4 md:mx-0">
+                        <div className="min-w-[700px] px-4 md:px-0">
+                          <Table>
+                            <TableHeader>
+                              <TableRow className="bg-muted/50">
+                                <TableHead className="w-[100px]">ID Feedback</TableHead>
+                                <TableHead className="min-w-[150px]">Pengguna</TableHead>
+                                <TableHead className="text-center">Kemudahan Tes</TableHead>
+                                <TableHead className="text-center">Relevansi Rekomendasi</TableHead>
+                                <TableHead className="text-center">Kepuasan Fitur</TableHead>
+                                <TableHead className="min-w-[200px]">Daftar Kendala</TableHead>
+                                <TableHead className="text-center w-[80px]">Aksi</TableHead>
+                              </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                              {paginatedData.map((feedback) => (
+                                <TableRow
+                                  key={feedback.id}
+                                  className="hover:bg-muted/30 transition-colors"
+                                >
+                                  <TableCell className="font-mono text-sm text-muted-foreground">
+                                    {feedback.id}
+                                  </TableCell>
+                                  <TableCell className="font-medium">
+                                    {feedback.userName}
+                                  </TableCell>
+                                  <TableCell className="text-center">
+                                    <ScoreBadge score={feedback.kemudahanTes} />
+                                  </TableCell>
+                                  <TableCell className="text-center">
+                                    <ScoreBadge score={feedback.relevansiRekomendasi} />
+                                  </TableCell>
+                                  <TableCell className="text-center">
+                                    <ScoreBadge score={feedback.kepuasanFitur} />
+                                  </TableCell>
+                                  <TableCell>
+                                    <KendalaChips kendala={feedback.kendala} />
+                                  </TableCell>
+                                  <TableCell className="text-center">
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      className="hover:bg-primary/10 hover:text-primary"
+                                    >
+                                      <Eye className="h-4 w-4" />
+                                    </Button>
+                                  </TableCell>
+                                </TableRow>
+                              ))}
+                            </TableBody>
+                          </Table>
+                        </div>
+                      </div>
+
+                      {/* Pagination */}
+                      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6 pt-4 border-t">
+                        <div className="flex items-center gap-3 order-2 sm:order-1">
+                          <span className="text-sm text-muted-foreground">Rows per page:</span>
+                          <Select
+                            value={rowsPerPage.toString()}
+                            onValueChange={(value) => {
+                              setRowsPerPage(Number(value));
+                              setCurrentPage(1);
+                            }}
+                          >
+                            <SelectTrigger className="w-[80px] h-8">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="25">25</SelectItem>
+                              <SelectItem value="50">50</SelectItem>
+                              <SelectItem value="100">100</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <span className="text-sm text-muted-foreground">
+                            Menampilkan {paginatedData.length} dari {totalDataCount.toLocaleString("id-ID")} data
+                          </span>
+                        </div>
+                        
+                        <div className="flex items-center gap-2 order-1 sm:order-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            disabled={currentPage === 1}
+                            onClick={() => setCurrentPage((p) => p - 1)}
+                            className="gap-1"
+                          >
+                            <ChevronLeft className="h-4 w-4" />
+                            Previous
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            disabled={currentPage === totalPages || totalPages === 0}
+                            onClick={() => setCurrentPage((p) => p + 1)}
+                            className="gap-1"
+                          >
+                            Next
+                            <ChevronRight className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
               </>
             ) : (
               // Visualisasi Tab
