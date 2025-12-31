@@ -850,6 +850,7 @@ export default function UmpanBalik() {
                                       }
                                     }}
                                     aria-label="Pilih semua"
+                                    className="rounded-[4px] border-muted-foreground/40 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                                   />
                                 </TableHead>
                                 <TableHead className="w-[100px]">ID Feedback</TableHead>
@@ -878,6 +879,7 @@ export default function UmpanBalik() {
                                         }
                                       }}
                                       aria-label={`Pilih ${feedback.userName}`}
+                                      className="rounded-[4px] border-muted-foreground/40 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                                     />
                                   </TableCell>
                                   <TableCell className="font-mono text-sm text-muted-foreground">
@@ -1131,6 +1133,7 @@ export default function UmpanBalik() {
                                     }
                                   }}
                                   aria-label="Pilih semua"
+                                  className="rounded-[4px] border-muted-foreground/40 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                                 />
                               </TableHead>
                               <TableHead className="w-[100px]">ID Feedback</TableHead>
@@ -1159,6 +1162,7 @@ export default function UmpanBalik() {
                                       }
                                     }}
                                     aria-label={`Pilih ${feedback.nama}`}
+                                    className="rounded-[4px] border-muted-foreground/40 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                                   />
                                 </TableCell>
                                 <TableCell className="font-mono text-sm text-muted-foreground">
