@@ -783,17 +783,6 @@ export default function UmpanBalik() {
                       {/* Search and Filter Controls - Only show when "Tes Profil Karier" selected */}
                       {selectedCategory === "tes-profil-karier" && (
                         <>
-                          {/* Search Bar */}
-                          <div className="relative flex-1">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                            <Input
-                              placeholder="Ketik nama pengguna…"
-                              className="pl-10"
-                              value={searchQuery}
-                              onChange={(e) => handleSearchChange(e.target.value)}
-                            />
-                          </div>
-                          
                           {/* Sort Dropdown */}
                           <Select
                             value={sortOption}
@@ -824,6 +813,17 @@ export default function UmpanBalik() {
                               <SelectItem value="has-kendala">Ada kendala</SelectItem>
                             </SelectContent>
                           </Select>
+                          
+                          {/* Search Bar - Paling Kanan */}
+                          <div className="relative flex-1">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                            <Input
+                              placeholder="Ketik nama pengguna…"
+                              className="pl-10"
+                              value={searchQuery}
+                              onChange={(e) => handleSearchChange(e.target.value)}
+                            />
+                          </div>
                         </>
                       )}
                     </div>
