@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Table,
   TableBody,
@@ -414,6 +415,10 @@ export default function UmpanBalik() {
   const [isMahasiswaDetailOpen, setIsMahasiswaDetailOpen] = useState(false);
   const [isMahasiswaDeleteOpen, setIsMahasiswaDeleteOpen] = useState(false);
   const [mahasiswaToDelete, setMahasiswaToDelete] = useState<MahasiswaFeedback | null>(null);
+  
+  // Checkbox selection states
+  const [selectedMahasiswaIds, setSelectedMahasiswaIds] = useState<string[]>([]);
+  const [selectedExpertIds, setSelectedExpertIds] = useState<string[]>([]);
 
   // Total data count (simulated large dataset)
   const totalDataCount = 10000;
@@ -834,6 +839,19 @@ export default function UmpanBalik() {
                           <Table>
                             <TableHeader>
                               <TableRow className="bg-muted/50">
+                                <TableHead className="w-[50px]">
+                                  <Checkbox
+                                    checked={paginatedData.length > 0 && selectedMahasiswaIds.length === paginatedData.length}
+                                    onCheckedChange={(checked) => {
+                                      if (checked) {
+                                        setSelectedMahasiswaIds(paginatedData.map((f) => f.id));
+                                      } else {
+                                        setSelectedMahasiswaIds([]);
+                                      }
+                                    }}
+                                    aria-label="Pilih semua"
+                                  />
+                                </TableHead>
                                 <TableHead className="w-[100px]">ID Feedback</TableHead>
                                 <TableHead className="min-w-[150px]">Nama Pengguna</TableHead>
                                 <TableHead className="text-center">Kemudahan Tes</TableHead>
@@ -847,8 +865,21 @@ export default function UmpanBalik() {
                               {paginatedData.map((feedback) => (
                                 <TableRow
                                   key={feedback.id}
-                                  className="hover:bg-muted/30 transition-colors"
+                                  className={`hover:bg-muted/30 transition-colors ${selectedMahasiswaIds.includes(feedback.id) ? 'bg-primary/5' : ''}`}
                                 >
+                                  <TableCell>
+                                    <Checkbox
+                                      checked={selectedMahasiswaIds.includes(feedback.id)}
+                                      onCheckedChange={(checked) => {
+                                        if (checked) {
+                                          setSelectedMahasiswaIds([...selectedMahasiswaIds, feedback.id]);
+                                        } else {
+                                          setSelectedMahasiswaIds(selectedMahasiswaIds.filter((id) => id !== feedback.id));
+                                        }
+                                      }}
+                                      aria-label={`Pilih ${feedback.userName}`}
+                                    />
+                                  </TableCell>
                                   <TableCell className="font-mono text-sm text-muted-foreground">
                                     {feedback.id}
                                   </TableCell>
@@ -1089,6 +1120,19 @@ export default function UmpanBalik() {
                         <Table>
                           <TableHeader>
                             <TableRow className="bg-muted/50">
+                              <TableHead className="w-[50px]">
+                                <Checkbox
+                                  checked={paginatedExpertData.length > 0 && selectedExpertIds.length === paginatedExpertData.length}
+                                  onCheckedChange={(checked) => {
+                                    if (checked) {
+                                      setSelectedExpertIds(paginatedExpertData.map((f) => f.id));
+                                    } else {
+                                      setSelectedExpertIds([]);
+                                    }
+                                  }}
+                                  aria-label="Pilih semua"
+                                />
+                              </TableHead>
                               <TableHead className="w-[100px]">ID Feedback</TableHead>
                               <TableHead className="min-w-[140px]">Nama Expert</TableHead>
                               <TableHead className="text-center">Akurasi</TableHead>
@@ -1102,8 +1146,21 @@ export default function UmpanBalik() {
                             {paginatedExpertData.map((feedback) => (
                               <TableRow
                                 key={feedback.id}
-                                className="hover:bg-muted/30 transition-colors"
+                                className={`hover:bg-muted/30 transition-colors ${selectedExpertIds.includes(feedback.id) ? 'bg-primary/5' : ''}`}
                               >
+                                <TableCell>
+                                  <Checkbox
+                                    checked={selectedExpertIds.includes(feedback.id)}
+                                    onCheckedChange={(checked) => {
+                                      if (checked) {
+                                        setSelectedExpertIds([...selectedExpertIds, feedback.id]);
+                                      } else {
+                                        setSelectedExpertIds(selectedExpertIds.filter((id) => id !== feedback.id));
+                                      }
+                                    }}
+                                    aria-label={`Pilih ${feedback.nama}`}
+                                  />
+                                </TableCell>
                                 <TableCell className="font-mono text-sm text-muted-foreground">
                                   {feedback.id}
                                 </TableCell>
