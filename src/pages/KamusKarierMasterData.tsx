@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -40,7 +41,6 @@ import { Search, Eye, Trash2, Download, AlertTriangle, Code, Palette, PenTool, M
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ProfesiDetailDrawer } from "@/components/ProfesiDetailDrawer";
 
 // Types
 interface Profesi {
@@ -187,6 +187,8 @@ const sortOptions = [
 type TabType = "profesi" | "perusahaan" | "istilah" | "artikel";
 
 const KamusKarierMasterData = () => {
+  const navigate = useNavigate();
+  
   // Tab state
   const [activeTab, setActiveTab] = useState<TabType>("profesi");
 
@@ -205,8 +207,6 @@ const KamusKarierMasterData = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [profesiToDelete, setProfesiToDelete] = useState<Profesi | null>(null);
   const [bulkDeleteDialogOpen, setBulkDeleteDialogOpen] = useState(false);
-  const [detailDrawerOpen, setDetailDrawerOpen] = useState(false);
-  const [selectedProfesi, setSelectedProfesi] = useState<Profesi | null>(null);
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
@@ -293,8 +293,7 @@ const KamusKarierMasterData = () => {
   };
 
   const handleViewDetail = (profesi: Profesi) => {
-    setSelectedProfesi(profesi);
-    setDetailDrawerOpen(true);
+    navigate(`/kamus-karier/master-data/profesi/${profesi.id}`);
   };
 
   const handleKategoriChange = (value: string) => {
@@ -736,12 +735,6 @@ const KamusKarierMasterData = () => {
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Detail Drawer */}
-      <ProfesiDetailDrawer
-        open={detailDrawerOpen}
-        onOpenChange={setDetailDrawerOpen}
-        profesi={selectedProfesi}
-      />
     </DashboardLayout>
   );
 };
