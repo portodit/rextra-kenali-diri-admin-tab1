@@ -19,6 +19,7 @@ import {
   Trophy,
   DollarSign,
   BarChart3,
+  BookOpen,
 } from "lucide-react";
 
 interface SidebarItemProps {
@@ -263,6 +264,31 @@ export function AppSidebar({ className, onClose }: AppSidebarProps) {
                 label="Umpan Balik"
                 href="/kenali-diri/umpan-balik"
                 isActive={location.pathname === "/kenali-diri/umpan-balik"}
+              />
+            </SidebarItem>
+            <SidebarItem
+              icon={BookOpen}
+              label="Kamus Karier"
+              isCollapsed={effectiveCollapsed}
+              hasDropdown
+              isOpen={isDropdownOpen("kamus-karier")}
+              onToggle={() => toggleDropdown("kamus-karier")}
+              isActive={location.pathname.startsWith("/kamus-karier")}
+            >
+              <SidebarDropdownItem
+                label="Master Data"
+                href="/kamus-karier/master-data"
+                isActive={location.pathname === "/kamus-karier/master-data"}
+              />
+              <SidebarDropdownItem
+                label="Kecocokan Profesi"
+                href="/kamus-karier/kecocokan-profesi"
+                isActive={location.pathname === "/kamus-karier/kecocokan-profesi"}
+              />
+              <SidebarDropdownItem
+                label="Statistik"
+                href="/kamus-karier/statistik"
+                isActive={location.pathname === "/kamus-karier/statistik"}
               />
             </SidebarItem>
           </div>
