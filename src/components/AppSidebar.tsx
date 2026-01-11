@@ -119,13 +119,19 @@ const SidebarDropdownItem = ({
 interface AppSidebarProps {
   className?: string;
   onClose?: () => void;
+  isCollapsed?: boolean;
+  onCollapsedChange?: (collapsed: boolean) => void;
 }
 
-export function AppSidebar({ className, onClose }: AppSidebarProps) {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+export function AppSidebar({ className, onClose, isCollapsed: controlledCollapsed, onCollapsedChange }: AppSidebarProps) {
+  const [internalCollapsed, setInternalCollapsed] = useState(false);
   const [openDropdowns, setOpenDropdowns] = useState<string[]>(["kenali-diri"]);
   const [isMobile, setIsMobile] = useState(false);
   const location = useLocation();
+
+  // Use controlled or internal state
+  const isCollapsed = controlledCollapsed !== undefined ? controlledCollapsed : internalCollapsed;
+  const setIsCollapsed = onCollapsedChange || setInternalCollapsed;
 
   // Responsive mobile detection
   useEffect(() => {
@@ -278,7 +284,7 @@ export function AppSidebar({ className, onClose }: AppSidebarProps) {
               <SidebarDropdownItem
                 label="Master Data"
                 href="/kamus-karier/master-data"
-                isActive={location.pathname === "/kamus-karier/master-data"}
+                isActive={location.pathname === "/kamus-karier/master-data" || location.pathname.startsWith("/kamus-karier/master-data/profesi")}
               />
               <SidebarDropdownItem
                 label="Kecocokan Profesi"
