@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import UmpanBalik from "./pages/UmpanBalik";
 import KamusKarierMasterData from "./pages/KamusKarierMasterData";
 import ProfesiDetail from "./pages/ProfesiDetail";
+import ProfesiEdit from "./pages/ProfesiEdit";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,6 +23,7 @@ const App = () => (
           <Route path="/kenali-diri/umpan-balik" element={<UmpanBalik />} />
           <Route path="/kamus-karier/master-data" element={<KamusKarierMasterData />} />
           <Route path="/kamus-karier/master-data/profesi/:id" element={<ProfesiDetail />} />
+          <Route path="/kamus-karier/master-data/profesi/:id/edit" element={<ProfesiEdit />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

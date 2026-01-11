@@ -147,7 +147,7 @@ const ProfesiDetail = () => {
   };
 
   const handleEdit = () => {
-    // TODO: Navigate to edit page
+    navigate(`/kamus-karier/master-data/profesi/${id}/edit`);
   };
 
   const handleRetry = () => {
