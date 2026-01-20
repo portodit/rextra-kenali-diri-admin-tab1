@@ -20,6 +20,7 @@ import {
   DollarSign,
   BarChart3,
   BookOpen,
+  Crown,
 } from "lucide-react";
 
 interface SidebarItemProps {
@@ -229,22 +230,33 @@ export function AppSidebar({ className, onClose, isCollapsed: controlledCollapse
               isActive={location.pathname === "/pendidikan"}
             />
             <SidebarItem
-              icon={Users}
-              label="REXTRA CLUB"
+              icon={Crown}
+              label="Membership"
               isCollapsed={effectiveCollapsed}
               hasDropdown
-              isOpen={isDropdownOpen("rextra-club")}
-              onToggle={() => toggleDropdown("rextra-club")}
+              isOpen={isDropdownOpen("membership")}
+              onToggle={() => toggleDropdown("membership")}
+              isActive={location.pathname.startsWith("/membership")}
             >
               <SidebarDropdownItem
-                label="Komunitas"
-                href="/rextra-club/komunitas"
-                isActive={location.pathname === "/rextra-club/komunitas"}
+                label="Fitur & Hak Akses"
+                href="/membership/fitur-hak-akses"
+                isActive={location.pathname === "/membership/fitur-hak-akses"}
               />
               <SidebarDropdownItem
-                label="Event"
-                href="/rextra-club/event"
-                isActive={location.pathname === "/rextra-club/event"}
+                label="Status Membership"
+                href="/membership/status"
+                isActive={location.pathname === "/membership/status"}
+              />
+              <SidebarDropdownItem
+                label="Sistem Poin"
+                href="/membership/sistem-poin"
+                isActive={location.pathname === "/membership/sistem-poin"}
+              />
+              <SidebarDropdownItem
+                label="Sistem Token"
+                href="/membership/sistem-token"
+                isActive={location.pathname === "/membership/sistem-token"}
               />
             </SidebarItem>
             <SidebarItem
