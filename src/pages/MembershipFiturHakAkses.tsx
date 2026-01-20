@@ -14,6 +14,14 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -1406,19 +1414,19 @@ export default function MembershipFiturHakAkses() {
         </DialogContent>
       </Dialog>
 
-      {/* Modal: Tambah/Edit Hak Akses */}
-      <Dialog open={hakAksesModalOpen} onOpenChange={setHakAksesModalOpen}>
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle>
+      {/* Drawer: Tambah/Edit Hak Akses */}
+      <Sheet open={hakAksesModalOpen} onOpenChange={setHakAksesModalOpen}>
+        <SheetContent className="w-full sm:max-w-lg overflow-y-auto">
+          <SheetHeader className="border-b pb-4">
+            <SheetTitle>
               {editingHakAkses ? "Edit Hak Akses" : "Tambah Hak Akses"}
-            </DialogTitle>
-            <DialogDescription>
+            </SheetTitle>
+            <SheetDescription>
               Hak akses dibentuk dari kombinasi objek (Fitur/Sub Fitur) dan kategori aksi.
               Pastikan pilihan benar karena akan menjadi key entitlement.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
+            </SheetDescription>
+          </SheetHeader>
+          <div className="space-y-4 py-6">
             {editingHakAkses && editingHakAkses.usedByMappings > 0 && (
               <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg p-3">
                 <div className="flex gap-2">
@@ -1561,14 +1569,14 @@ export default function MembershipFiturHakAkses() {
               </div>
             )}
           </div>
-          <DialogFooter>
+          <SheetFooter className="border-t pt-4">
             <Button variant="outline" onClick={() => setHakAksesModalOpen(false)}>
               Batal
             </Button>
             <Button onClick={saveHakAkses}>Simpan</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
     </DashboardLayout>
   );
 }
