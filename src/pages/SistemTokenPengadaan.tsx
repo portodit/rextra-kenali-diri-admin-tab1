@@ -857,35 +857,26 @@ export default function SistemTokenPengadaan() {
 
           {/* Tab Content: Pembelian Custom */}
           <TabsContent value="custom" className="space-y-4 sm:space-y-6">
-            {/* Section 1: Status Toggle */}
-            <Card>
-              <CardHeader className="pb-3 sm:pb-4">
-                <CardTitle className="text-base sm:text-lg flex items-center gap-2">
-                  <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold">1</span>
-                  Status Custom Purchase
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3 sm:space-y-4">
-                <p className="text-xs sm:text-sm text-muted-foreground">
-                  Aktifkan pembelian custom agar user bisa membeli token dalam jumlah fleksibel sesuai kebutuhan.
-                </p>
-                <div className="flex items-center gap-3">
-                  <Switch
-                    checked={customConfig.enabled}
-                    onCheckedChange={handleToggleCustomPurchase}
-                  />
-                  <Label className="text-sm font-medium">
-                    {customConfig.enabled ? "Aktif" : "Nonaktif"}
-                  </Label>
-                </div>
-              </CardContent>
-            </Card>
+            {/* Status Toggle - Compact inline */}
+            <div className="flex items-center justify-between p-3 sm:p-4 rounded-lg border bg-card">
+              <div className="flex items-center gap-3">
+                <div className={`w-2 h-2 rounded-full ${customConfig.enabled ? 'bg-emerald-500' : 'bg-muted-foreground'}`} />
+                <span className="text-sm font-medium">Pembelian Custom</span>
+                <Badge variant={customConfig.enabled ? "default" : "secondary"} className="text-xs">
+                  {customConfig.enabled ? "Aktif" : "Nonaktif"}
+                </Badge>
+              </div>
+              <Switch
+                checked={customConfig.enabled}
+                onCheckedChange={handleToggleCustomPurchase}
+              />
+            </div>
 
-            {/* Section 2: Purchase Limits */}
+            {/* Section 1: Purchase Limits */}
             <Card className={!customConfig.enabled ? "opacity-50 pointer-events-none" : ""}>
               <CardHeader className="pb-3 sm:pb-4">
                 <CardTitle className="text-base sm:text-lg flex items-center gap-2">
-                  <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold">2</span>
+                  <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold">1</span>
                   Batas Pembelian
                 </CardTitle>
               </CardHeader>
@@ -934,11 +925,11 @@ export default function SistemTokenPengadaan() {
               </CardContent>
             </Card>
 
-            {/* Section 3: Base Price */}
+            {/* Section 2: Base Price */}
             <Card className={!customConfig.enabled ? "opacity-50 pointer-events-none" : ""}>
               <CardHeader className="pb-3 sm:pb-4">
                 <CardTitle className="text-base sm:text-lg flex items-center gap-2">
-                  <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold">3</span>
+                  <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold">2</span>
                   Harga Rekomendasi per Token
                 </CardTitle>
               </CardHeader>
@@ -978,12 +969,12 @@ export default function SistemTokenPengadaan() {
               </CardContent>
             </Card>
 
-            {/* Section 4: Tier Pricing */}
+            {/* Section 3: Tier Pricing */}
             <Card className={!customConfig.enabled ? "opacity-50 pointer-events-none" : ""}>
               <CardHeader className="pb-3 sm:pb-4">
                 <div className="flex items-center justify-between gap-4">
                   <CardTitle className="text-base sm:text-lg flex items-center gap-2">
-                    <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold">4</span>
+                    <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold">3</span>
                     Aturan Diskon Bertingkat
                   </CardTitle>
                   <Button
@@ -1095,11 +1086,11 @@ export default function SistemTokenPengadaan() {
               </CardContent>
             </Card>
 
-            {/* Section 5: Price Simulation */}
+            {/* Section 4: Price Simulation */}
             <Card className={!customConfig.enabled ? "opacity-50 pointer-events-none" : ""}>
               <CardHeader className="pb-3 sm:pb-4">
                 <CardTitle className="text-base sm:text-lg flex items-center gap-2">
-                  <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold">5</span>
+                  <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold">4</span>
                   Simulasi Harga (Preview)
                 </CardTitle>
               </CardHeader>
