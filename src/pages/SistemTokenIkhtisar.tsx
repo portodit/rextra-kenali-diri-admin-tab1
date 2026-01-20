@@ -557,13 +557,13 @@ export default function SistemTokenIkhtisar() {
           </Tooltip>
         </div>
 
-        {/* Control Bar - Rearranged */}
+        {/* Control Bar - All in one row */}
         <div className="space-y-4">
-          {/* Row 1: Tabs on left, Period + Status on right */}
-          <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
+          {/* Main Control Row: Tabs | Search | Period | Status */}
+          <div className="flex flex-col xl:flex-row gap-4 items-start xl:items-center">
             {/* Tabs - Left */}
-            <Tabs value={selectedTab} onValueChange={(v) => setSelectedTab(v as TabType)} className="w-full lg:w-auto">
-              <TabsList className="w-full lg:w-auto grid grid-cols-4 lg:flex">
+            <Tabs value={selectedTab} onValueChange={(v) => setSelectedTab(v as TabType)} className="w-full xl:w-auto shrink-0">
+              <TabsList className="w-full xl:w-auto grid grid-cols-4 xl:flex">
                 <TabsTrigger value="semua">Semua</TabsTrigger>
                 <TabsTrigger value="topup">Top Up</TabsTrigger>
                 <TabsTrigger value="alokasi">Alokasi</TabsTrigger>
@@ -571,41 +571,44 @@ export default function SistemTokenIkhtisar() {
               </TabsList>
             </Tabs>
 
-            {/* Period + Status Filter - Right */}
-            <div className="flex gap-3 w-full lg:w-auto">
-              <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
-                <SelectTrigger className="w-full sm:w-[160px]">
-                  <SelectValue placeholder="Pilih periode" />
-                </SelectTrigger>
-                <SelectContent className="z-50 bg-popover">
-                  <SelectItem value="7d">7 Hari Terakhir</SelectItem>
-                  <SelectItem value="30d">30 Hari Terakhir</SelectItem>
-                  <SelectItem value="90d">90 Hari Terakhir</SelectItem>
-                  <SelectItem value="custom">Kustom</SelectItem>
-                </SelectContent>
-              </Select>
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-full sm:w-[130px]">
-                  <SelectValue placeholder="Status" />
-                </SelectTrigger>
-                <SelectContent className="z-50 bg-popover">
-                  <SelectItem value="semua">Semua</SelectItem>
-                  <SelectItem value="berhasil">Berhasil</SelectItem>
-                  <SelectItem value="gagal">Gagal</SelectItem>
-                </SelectContent>
-              </Select>
+            {/* Search + Period + Status - Right side */}
+            <div className="flex flex-col sm:flex-row gap-3 w-full xl:flex-1 xl:justify-end">
+              {/* Search */}
+              <div className="relative flex-1 xl:max-w-[280px]">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Cari user, email, atau reference ID..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-9"
+                />
+              </div>
+              
+              {/* Period + Status */}
+              <div className="flex gap-3">
+                <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
+                  <SelectTrigger className="w-[150px]">
+                    <SelectValue placeholder="Pilih periode" />
+                  </SelectTrigger>
+                  <SelectContent className="z-50 bg-popover">
+                    <SelectItem value="7d">7 Hari Terakhir</SelectItem>
+                    <SelectItem value="30d">30 Hari Terakhir</SelectItem>
+                    <SelectItem value="90d">90 Hari Terakhir</SelectItem>
+                    <SelectItem value="custom">Kustom</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger className="w-[120px]">
+                    <SelectValue placeholder="Status" />
+                  </SelectTrigger>
+                  <SelectContent className="z-50 bg-popover">
+                    <SelectItem value="semua">Semua</SelectItem>
+                    <SelectItem value="berhasil">Berhasil</SelectItem>
+                    <SelectItem value="gagal">Gagal</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
-          </div>
-
-          {/* Row 2: Search */}
-          <div className="relative w-full lg:max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Cari user, email, atau reference ID..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9"
-            />
           </div>
 
           {/* Demo State Toggle (for development) */}
