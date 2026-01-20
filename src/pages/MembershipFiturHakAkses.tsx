@@ -684,20 +684,25 @@ export default function MembershipFiturHakAkses() {
               </p>
             </div>
 
-            {/* Callout */}
-            <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
-              <div className="flex gap-3">
-                <AlertTriangle className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
-                <div className="space-y-2 text-sm">
-                  <p className="font-medium text-amber-800 dark:text-amber-200">Catatan Penting</p>
-                  <ul className="list-disc list-inside text-amber-700 dark:text-amber-300 space-y-1">
+            {/* Callout - Collapsible */}
+            <Collapsible>
+              <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg">
+                <CollapsibleTrigger className="w-full p-4 flex items-center justify-between hover:bg-amber-100/50 dark:hover:bg-amber-900/20 transition-colors rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <AlertTriangle className="h-5 w-5 text-amber-600 shrink-0" />
+                    <p className="font-medium text-amber-800 dark:text-amber-200 text-sm">Catatan Penting</p>
+                  </div>
+                  <ChevronDown className="h-4 w-4 text-amber-600 transition-transform duration-200 [[data-state=open]>&]:rotate-180" />
+                </CollapsibleTrigger>
+                <CollapsibleContent className="px-4 pb-4">
+                  <ul className="list-disc list-inside text-amber-700 dark:text-amber-300 space-y-1 text-sm ml-8">
                     <li>Data fitur & sub fitur akan menjadi referensi pada Tab Hak Akses untuk membentuk entitlement.</li>
                     <li>Data ini juga menjadi referensi pada halaman konfigurasi akses membership untuk mapping entitlement ke paket.</li>
                     <li>Nama dan slug harus konsisten dan tidak diubah sembarangan karena berdampak langsung pada struktur hak akses.</li>
                   </ul>
-                </div>
+                </CollapsibleContent>
               </div>
-            </div>
+            </Collapsible>
 
             {/* Toolbar */}
             <div className="flex flex-col sm:flex-row gap-4">
@@ -732,7 +737,6 @@ export default function MembershipFiturHakAkses() {
                 <TableHeader>
                   <TableRow className="bg-muted/50">
                     <TableHead className="w-[50px]"></TableHead>
-                    <TableHead className="w-[60px]">Ikon</TableHead>
                     <TableHead>Nama Fitur</TableHead>
                     <TableHead>Slug Fitur</TableHead>
                     <TableHead className="text-center">Sub Fitur</TableHead>
@@ -744,7 +748,7 @@ export default function MembershipFiturHakAkses() {
                 <TableBody>
                   {filteredFiturData.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={8} className="text-center py-12">
+                      <TableCell colSpan={7} className="text-center py-12">
                         <div className="space-y-3">
                           <p className="text-muted-foreground">Belum ada fitur</p>
                           <Button variant="outline" size="sm" onClick={openAddFiturModal}>
@@ -769,9 +773,6 @@ export default function MembershipFiturHakAkses() {
                                 <ChevronRight className="h-4 w-4" />
                               )}
                             </button>
-                          </TableCell>
-                          <TableCell>
-                            <span className="text-xl">{fitur.icon || "—"}</span>
                           </TableCell>
                           <TableCell className="font-medium">{fitur.name}</TableCell>
                           <TableCell>
@@ -1204,15 +1205,6 @@ export default function MembershipFiturHakAkses() {
               {slugError && (
                 <p className="text-xs text-destructive">{slugError}</p>
               )}
-            </div>
-            <div className="space-y-2">
-              <Label>Ikon (emoji)</Label>
-              <Input
-                placeholder="📁"
-                value={fiturForm.icon}
-                onChange={(e) => setFiturForm((prev) => ({ ...prev, icon: e.target.value }))}
-                maxLength={2}
-              />
             </div>
             <div className="space-y-2">
               <Label>Deskripsi</Label>
