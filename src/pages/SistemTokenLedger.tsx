@@ -307,6 +307,38 @@ export default function SistemTokenLedger() {
     return data;
   }, [debouncedSearch, periodFilter, dateRange, movementFilter, sourceFilter, sortBy]);
 
+  // Export data to CSV - declared after filteredData
+  const handleExportData = useCallback(() => {
+    const headers = ["Waktu", "User", "User ID", "Sumber", "Pergerakan", "Perubahan Token", "Saldo Sebelum", "Saldo Sesudah", "Referensi", "Keterangan"];
+    const csvContent = [
+      headers.join(","),
+      ...filteredData.map(entry => [
+        format(entry.timestamp, "dd/MM/yyyy HH:mm:ss"),
+        `"${entry.userName}"`,
+        entry.userId,
+        getSourceBadge(entry.source).label,
+        entry.movement === "in" ? "Masuk" : "Keluar",
+        entry.tokenChange,
+        entry.balanceBefore,
+        entry.balanceAfter,
+        entry.referenceId,
+        `"${entry.description}"`
+      ].join(","))
+    ].join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `ledger-token-${format(new Date(), "yyyyMMdd-HHmmss")}.csv`;
+    link.click();
+
+    toast({
+      title: "Export berhasil",
+      description: `${filteredData.length} entri telah diexport ke CSV`,
+      duration: 3000,
+    });
+  }, [filteredData]);
+
   // Paginated data
   const paginatedData = useMemo(() => {
     const start = (currentPage - 1) * itemsPerPage;
@@ -388,9 +420,14 @@ export default function SistemTokenLedger() {
                 Pantau pergerakan saldo token secara transparan dan dapat ditelusuri.
               </p>
             </div>
-            <Button variant="outline" size="sm" className="w-fit gap-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="w-fit gap-2 hover:bg-primary/5 hover:text-primary hover:border-primary/30 transition-colors"
+              onClick={handleExportData}
+            >
               <Download className="h-4 w-4" />
-              <span className="hidden sm:inline">Export</span>
+              <span className="hidden sm:inline">Export CSV</span>
             </Button>
           </div>
 
@@ -706,274 +743,288 @@ export default function SistemTokenLedger() {
           </>
         )}
 
-        {/* Detail Drawer */}
+        {/* Detail Drawer - Modern Design */}
         <Sheet open={isDetailOpen} onOpenChange={setIsDetailOpen}>
-          <SheetContent className="w-full sm:max-w-[500px] p-0 overflow-hidden flex flex-col">
+          <SheetContent className="w-full sm:max-w-[480px] p-0 overflow-hidden flex flex-col bg-background">
             {selectedEntry && (
               <>
-                {/* Header */}
-                <SheetHeader className="p-6 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground">
-                  <SheetTitle className="text-primary-foreground">Detail Ledger</SheetTitle>
+                {/* Modern Minimal Header */}
+                <SheetHeader className="px-6 py-5 border-b bg-card">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div
+                        className={cn(
+                          "w-10 h-10 rounded-xl flex items-center justify-center",
+                          selectedEntry.movement === "in"
+                            ? "bg-gradient-to-br from-emerald-500/20 to-emerald-600/10 ring-1 ring-emerald-500/30"
+                            : "bg-gradient-to-br from-rose-500/20 to-rose-600/10 ring-1 ring-rose-500/30"
+                        )}
+                      >
+                        {selectedEntry.movement === "in" ? (
+                          <ArrowUpCircle className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                        ) : (
+                          <ArrowDownCircle className="h-5 w-5 text-rose-600 dark:text-rose-400" />
+                        )}
+                      </div>
+                      <div>
+                        <SheetTitle className="text-base font-semibold">Detail Ledger</SheetTitle>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          {format(selectedEntry.timestamp, "dd MMM yyyy, HH:mm", { locale: id })} WIB
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 </SheetHeader>
 
                 {/* Content */}
                 <div className="flex-1 overflow-y-auto">
-                  {/* Summary Card */}
-                  <div className="p-6 border-b">
-                    <div className="flex items-center gap-4 mb-4">
-                      <div
+                  {/* Token Change Hero */}
+                  <div className="px-6 py-8 bg-gradient-to-b from-muted/50 to-transparent">
+                    <div className="text-center">
+                      <p
                         className={cn(
-                          "w-12 h-12 rounded-full flex items-center justify-center",
-                          selectedEntry.movement === "in"
-                            ? "bg-emerald-100 dark:bg-emerald-900/30"
-                            : "bg-red-100 dark:bg-red-900/30"
+                          "text-4xl font-bold tracking-tight",
+                          selectedEntry.movement === "in" 
+                            ? "text-emerald-600 dark:text-emerald-400" 
+                            : "text-rose-600 dark:text-rose-400"
                         )}
                       >
-                        {selectedEntry.movement === "in" ? (
-                          <ArrowUpCircle className="h-6 w-6 text-emerald-600" />
-                        ) : (
-                          <ArrowDownCircle className="h-6 w-6 text-destructive" />
+                        {selectedEntry.movement === "in" ? "+" : ""}{selectedEntry.tokenChange.toLocaleString()} Token
+                      </p>
+                      <Badge 
+                        variant="secondary" 
+                        className={cn(
+                          "mt-3 px-3 py-1 font-medium",
+                          selectedEntry.movement === "in" 
+                            ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300" 
+                            : "bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300"
                         )}
-                      </div>
-                      <div>
-                        <p
-                          className={cn(
-                            "text-2xl font-bold",
-                            selectedEntry.movement === "in" ? "text-emerald-600" : "text-destructive"
-                          )}
-                        >
-                          {selectedEntry.movement === "in" ? "+" : ""}{selectedEntry.tokenChange} Token
-                        </p>
-                        <p className="text-sm text-muted-foreground">{getSourceBadge(selectedEntry.source).label}</p>
-                      </div>
+                      >
+                        {getSourceBadge(selectedEntry.source).label}
+                      </Badge>
                     </div>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="bg-muted/50 rounded-lg p-3">
-                        <p className="text-xs text-muted-foreground">Saldo Sebelum</p>
-                        <p className="text-lg font-semibold">{selectedEntry.balanceBefore}</p>
+                    
+                    {/* Balance Cards */}
+                    <div className="grid grid-cols-2 gap-4 mt-6">
+                      <div className="relative overflow-hidden rounded-xl bg-card p-4 ring-1 ring-border/50 shadow-sm">
+                        <div className="absolute top-0 left-0 w-1 h-full bg-muted-foreground/20 rounded-l-xl" />
+                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Sebelum</p>
+                        <p className="text-xl font-bold mt-1">{selectedEntry.balanceBefore.toLocaleString()}</p>
                       </div>
-                      <div className="bg-muted/50 rounded-lg p-3">
-                        <p className="text-xs text-muted-foreground">Saldo Sesudah</p>
-                        <p className="text-lg font-semibold">{selectedEntry.balanceAfter}</p>
+                      <div className="relative overflow-hidden rounded-xl bg-card p-4 ring-1 ring-border/50 shadow-sm">
+                        <div className={cn(
+                          "absolute top-0 left-0 w-1 h-full rounded-l-xl",
+                          selectedEntry.movement === "in" ? "bg-emerald-500" : "bg-rose-500"
+                        )} />
+                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Sesudah</p>
+                        <p className="text-xl font-bold mt-1">{selectedEntry.balanceAfter.toLocaleString()}</p>
                       </div>
                     </div>
                   </div>
 
                   {/* Tabs */}
-                  <Tabs defaultValue="info" className="p-4">
-                    <TabsList className="w-full grid grid-cols-2">
-                      <TabsTrigger value="info">Info</TabsTrigger>
-                      <TabsTrigger value="source">Detail Sumber</TabsTrigger>
-                    </TabsList>
+                  <div className="px-6 pb-6">
+                    <Tabs defaultValue="info" className="w-full">
+                      <TabsList className="w-full grid grid-cols-2 h-11 p-1 bg-muted/60 rounded-xl">
+                        <TabsTrigger value="info" className="rounded-lg text-sm font-medium data-[state=active]:bg-card data-[state=active]:shadow-sm">
+                          Info
+                        </TabsTrigger>
+                        <TabsTrigger value="source" className="rounded-lg text-sm font-medium data-[state=active]:bg-card data-[state=active]:shadow-sm">
+                          Detail Sumber
+                        </TabsTrigger>
+                      </TabsList>
 
-                    <TabsContent value="info" className="mt-4 space-y-4">
-                      {/* Info Grid */}
-                      <div className="rounded-lg border overflow-hidden">
-                        {[
-                          { label: "ID Ledger", value: selectedEntry.id, copyable: true },
-                          { label: "Waktu", value: format(selectedEntry.timestamp, "dd/MM/yyyy HH:mm:ss", { locale: id }) + " WIB" },
-                          { label: "User", value: `${selectedEntry.userName} (${selectedEntry.userId})` },
-                          { label: "Referensi", value: selectedEntry.referenceId, copyable: true },
-                          { label: "Keterangan", value: selectedEntry.description },
-                        ].map((item, idx) => (
-                          <div
-                            key={item.label}
-                            className={cn(
-                              "grid grid-cols-[100px_1fr] items-center",
-                              idx !== 0 && "border-t"
-                            )}
-                          >
-                            <span className="px-3 py-2.5 text-xs text-muted-foreground bg-muted/50">
-                              {item.label}
-                            </span>
-                            <span className="px-3 py-2.5 text-sm font-medium flex items-center gap-2">
-                              <span className="truncate">{item.value}</span>
-                              {item.copyable && (
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  className="h-6 w-6 shrink-0"
-                                  onClick={() => handleCopy(item.value)}
-                                >
-                                  <Copy className="h-3 w-3" />
-                                </Button>
-                              )}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </TabsContent>
-
-                    <TabsContent value="source" className="mt-4 space-y-4">
-                      {selectedEntry.source === "top_up" && (
-                        <>
-                          <div className="rounded-lg border overflow-hidden">
-                            {[
-                              { label: "Invoice", value: selectedEntry.sourceDetails?.invoiceId || "-" },
-                              { label: "Metode", value: selectedEntry.sourceDetails?.paymentMethod || "-" },
-                              { label: "Status", value: selectedEntry.sourceDetails?.paymentStatus || "-", isBadge: true },
-                            ].map((item, idx) => (
-                              <div
-                                key={item.label}
-                                className={cn("grid grid-cols-[100px_1fr] items-center", idx !== 0 && "border-t")}
-                              >
-                                <span className="px-3 py-2.5 text-xs text-muted-foreground bg-muted/50">
-                                  {item.label}
-                                </span>
-                                <span className="px-3 py-2.5 text-sm">
-                                  {item.isBadge ? (
-                                    <Badge variant="default" className="bg-emerald-500">✓ {item.value}</Badge>
-                                  ) : (
-                                    item.value
-                                  )}
-                                </span>
-                              </div>
-                            ))}
-                          </div>
-                          <Button variant="outline" className="w-full gap-2">
-                            <ExternalLink className="h-4 w-4" />
-                            Lihat Transaksi Top Up
-                          </Button>
-                        </>
-                      )}
-
-                      {selectedEntry.source === "membership" && (
-                        <>
-                          <div className="rounded-lg border overflow-hidden">
-                            {[
-                              { label: "Paket", value: selectedEntry.sourceDetails?.membershipPlan || "-" },
-                              { label: "Periode", value: selectedEntry.sourceDetails?.membershipPeriod || "-" },
-                              { label: "Event", value: selectedEntry.sourceDetails?.membershipEvent || "-" },
-                              { label: "ID Member", value: selectedEntry.sourceDetails?.memberId || "-" },
-                            ].map((item, idx) => (
-                              <div
-                                key={item.label}
-                                className={cn("grid grid-cols-[100px_1fr] items-center", idx !== 0 && "border-t")}
-                              >
-                                <span className="px-3 py-2.5 text-xs text-muted-foreground bg-muted/50">
-                                  {item.label}
-                                </span>
-                                <span className="px-3 py-2.5 text-sm">{item.value}</span>
-                              </div>
-                            ))}
-                          </div>
-                          <Button variant="outline" className="w-full gap-2">
-                            <ExternalLink className="h-4 w-4" />
-                            Lihat Detail Membership
-                          </Button>
-                        </>
-                      )}
-
-                      {selectedEntry.source === "konsumsi" && (
-                        <>
-                          <div className="rounded-lg border overflow-hidden">
-                            {[
-                              { label: "Fitur", value: selectedEntry.sourceDetails?.featureName || "-" },
-                              { label: "Key", value: selectedEntry.sourceDetails?.entitlementKey || "-" },
-                              { label: "Cost", value: `${selectedEntry.sourceDetails?.costToken || 0} token` },
-                              { label: "Request ID", value: selectedEntry.sourceDetails?.requestId || "-" },
-                            ].map((item, idx) => (
-                              <div
-                                key={item.label}
-                                className={cn("grid grid-cols-[100px_1fr] items-center", idx !== 0 && "border-t")}
-                              >
-                                <span className="px-3 py-2.5 text-xs text-muted-foreground bg-muted/50">
-                                  {item.label}
-                                </span>
-                                <span className="px-3 py-2.5 text-sm font-mono text-xs">{item.value}</span>
-                              </div>
-                            ))}
-                          </div>
-                          <div className="flex items-center gap-2 p-3 bg-muted/50 rounded-lg border border-dashed text-muted-foreground">
-                            <Info className="h-4 w-4" />
-                            <span className="text-xs">Log Konsumsi Fitur (Coming Soon)</span>
-                          </div>
-                        </>
-                      )}
-
-                      {selectedEntry.source === "koreksi" && (
-                        <>
-                          <div className="rounded-lg border overflow-hidden">
-                            {[
-                              { label: "Jenis", value: selectedEntry.sourceDetails?.correctionType || "-" },
-                              { label: "Operator", value: selectedEntry.sourceDetails?.operator || "-" },
-                              { label: "Ticket", value: selectedEntry.sourceDetails?.ticketRef || "-" },
-                            ].map((item, idx) => (
-                              <div
-                                key={item.label}
-                                className={cn("grid grid-cols-[100px_1fr] items-center", idx !== 0 && "border-t")}
-                              >
-                                <span className="px-3 py-2.5 text-xs text-muted-foreground bg-muted/50">
-                                  {item.label}
-                                </span>
-                                <span className="px-3 py-2.5 text-sm">{item.value}</span>
-                              </div>
-                            ))}
-                          </div>
-                          {selectedEntry.sourceDetails?.correctionReason && (
-                            <div className="p-3 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 rounded-lg">
-                              <p className="text-xs text-amber-800 dark:text-amber-200 font-medium mb-1">Alasan Koreksi</p>
-                              <p className="text-sm text-amber-900 dark:text-amber-100">
-                                {selectedEntry.sourceDetails.correctionReason}
-                              </p>
+                      <TabsContent value="info" className="mt-5 space-y-4">
+                        {/* Modern Info Grid */}
+                        <div className="rounded-xl border bg-card overflow-hidden divide-y">
+                          {[
+                            { label: "ID Ledger", value: selectedEntry.id, copyable: true },
+                            { label: "Waktu", value: format(selectedEntry.timestamp, "dd/MM/yyyy HH:mm:ss", { locale: id }) + " WIB" },
+                            { label: "User", value: `${selectedEntry.userName} (${selectedEntry.userId})` },
+                            { label: "Referensi", value: selectedEntry.referenceId, copyable: true },
+                            { label: "Keterangan", value: selectedEntry.description },
+                          ].map((item) => (
+                            <div
+                              key={item.label}
+                              className="flex items-center justify-between px-4 py-3 hover:bg-muted/30 transition-colors"
+                            >
+                              <span className="text-sm text-muted-foreground">{item.label}</span>
+                              <span className="text-sm font-medium flex items-center gap-2 text-right max-w-[60%]">
+                                <span className="truncate">{item.value}</span>
+                                {item.copyable && (
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-7 w-7 shrink-0 hover:bg-primary/10 hover:text-primary"
+                                    onClick={() => handleCopy(item.value)}
+                                  >
+                                    <Copy className="h-3.5 w-3.5" />
+                                  </Button>
+                                )}
+                              </span>
                             </div>
-                          )}
-                        </>
-                      )}
+                          ))}
+                        </div>
+                      </TabsContent>
 
-                      {selectedEntry.source === "refund" && (
-                        <>
-                          <div className="rounded-lg border overflow-hidden">
-                            {[
-                              { label: "Transaksi Asal", value: selectedEntry.sourceDetails?.originalTransaction || "-" },
-                              { label: "Alasan", value: selectedEntry.sourceDetails?.refundReason || "-" },
-                              { label: "Operator", value: selectedEntry.sourceDetails?.operator || "-" },
-                            ].map((item, idx) => (
-                              <div
-                                key={item.label}
-                                className={cn("grid grid-cols-[100px_1fr] items-center", idx !== 0 && "border-t")}
-                              >
-                                <span className="px-3 py-2.5 text-xs text-muted-foreground bg-muted/50">
-                                  {item.label}
-                                </span>
-                                <span className="px-3 py-2.5 text-sm">{item.value}</span>
+                      <TabsContent value="source" className="mt-5 space-y-4">
+                        {selectedEntry.source === "top_up" && (
+                          <>
+                            <div className="rounded-xl border bg-card overflow-hidden divide-y">
+                              {[
+                                { label: "Invoice", value: selectedEntry.sourceDetails?.invoiceId || "-" },
+                                { label: "Metode Bayar", value: selectedEntry.sourceDetails?.paymentMethod || "-" },
+                              ].map((item) => (
+                                <div
+                                  key={item.label}
+                                  className="flex items-center justify-between px-4 py-3 hover:bg-muted/30 transition-colors"
+                                >
+                                  <span className="text-sm text-muted-foreground">{item.label}</span>
+                                  <span className="text-sm font-medium">{item.value}</span>
+                                </div>
+                              ))}
+                              <div className="flex items-center justify-between px-4 py-3 hover:bg-muted/30 transition-colors">
+                                <span className="text-sm text-muted-foreground">Status</span>
+                                <Badge className="bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-0 font-medium">
+                                  ✓ {selectedEntry.sourceDetails?.paymentStatus}
+                                </Badge>
                               </div>
-                            ))}
-                          </div>
-                          <Button variant="outline" className="w-full gap-2">
-                            <ExternalLink className="h-4 w-4" />
-                            Lihat Transaksi Asal
-                          </Button>
-                        </>
-                      )}
+                            </div>
+                            <Button variant="outline" className="w-full h-11 gap-2 rounded-xl font-medium hover:bg-primary/5 hover:text-primary hover:border-primary/30">
+                              <ExternalLink className="h-4 w-4" />
+                              Lihat Transaksi Top Up
+                            </Button>
+                          </>
+                        )}
 
-                      {selectedEntry.source === "expired" && (
-                        <>
-                          <div className="rounded-lg border overflow-hidden">
-                            {[
-                              { label: "Tipe", value: "Token Expired" },
-                              { label: "Sumber Token", value: selectedEntry.sourceDetails?.expiredSource || "-" },
-                              { label: "Proses", value: "Otomatis Sistem" },
-                            ].map((item, idx) => (
-                              <div
-                                key={item.label}
-                                className={cn("grid grid-cols-[100px_1fr] items-center", idx !== 0 && "border-t")}
-                              >
-                                <span className="px-3 py-2.5 text-xs text-muted-foreground bg-muted/50">
-                                  {item.label}
-                                </span>
-                                <span className="px-3 py-2.5 text-sm">{item.value}</span>
+                        {selectedEntry.source === "membership" && (
+                          <>
+                            <div className="rounded-xl border bg-card overflow-hidden divide-y">
+                              {[
+                                { label: "Paket", value: selectedEntry.sourceDetails?.membershipPlan || "-" },
+                                { label: "Periode", value: selectedEntry.sourceDetails?.membershipPeriod || "-" },
+                                { label: "Event", value: selectedEntry.sourceDetails?.membershipEvent || "-" },
+                                { label: "ID Member", value: selectedEntry.sourceDetails?.memberId || "-" },
+                              ].map((item) => (
+                                <div
+                                  key={item.label}
+                                  className="flex items-center justify-between px-4 py-3 hover:bg-muted/30 transition-colors"
+                                >
+                                  <span className="text-sm text-muted-foreground">{item.label}</span>
+                                  <span className="text-sm font-medium">{item.value}</span>
+                                </div>
+                              ))}
+                            </div>
+                            <Button variant="outline" className="w-full h-11 gap-2 rounded-xl font-medium hover:bg-primary/5 hover:text-primary hover:border-primary/30">
+                              <ExternalLink className="h-4 w-4" />
+                              Lihat Detail Membership
+                            </Button>
+                          </>
+                        )}
+
+                        {selectedEntry.source === "konsumsi" && (
+                          <>
+                            <div className="rounded-xl border bg-card overflow-hidden divide-y">
+                              {[
+                                { label: "Fitur", value: selectedEntry.sourceDetails?.featureName || "-" },
+                                { label: "Entitlement", value: selectedEntry.sourceDetails?.entitlementKey || "-" },
+                                { label: "Token Terpakai", value: `${selectedEntry.sourceDetails?.costToken || 0} token` },
+                                { label: "Request ID", value: selectedEntry.sourceDetails?.requestId || "-" },
+                              ].map((item) => (
+                                <div
+                                  key={item.label}
+                                  className="flex items-center justify-between px-4 py-3 hover:bg-muted/30 transition-colors"
+                                >
+                                  <span className="text-sm text-muted-foreground">{item.label}</span>
+                                  <span className="text-sm font-medium font-mono text-xs">{item.value}</span>
+                                </div>
+                              ))}
+                            </div>
+                            <div className="flex items-center gap-3 p-4 bg-muted/40 rounded-xl border border-dashed text-muted-foreground">
+                              <Info className="h-4 w-4 shrink-0" />
+                              <span className="text-sm">Log Konsumsi Fitur — Coming Soon</span>
+                            </div>
+                          </>
+                        )}
+
+                        {selectedEntry.source === "koreksi" && (
+                          <>
+                            <div className="rounded-xl border bg-card overflow-hidden divide-y">
+                              {[
+                                { label: "Jenis Koreksi", value: selectedEntry.sourceDetails?.correctionType || "-" },
+                                { label: "Operator", value: selectedEntry.sourceDetails?.operator || "-" },
+                                { label: "Ticket Ref", value: selectedEntry.sourceDetails?.ticketRef || "-" },
+                              ].map((item) => (
+                                <div
+                                  key={item.label}
+                                  className="flex items-center justify-between px-4 py-3 hover:bg-muted/30 transition-colors"
+                                >
+                                  <span className="text-sm text-muted-foreground">{item.label}</span>
+                                  <span className="text-sm font-medium">{item.value}</span>
+                                </div>
+                              ))}
+                            </div>
+                            {selectedEntry.sourceDetails?.correctionReason && (
+                              <div className="p-4 bg-amber-50/80 dark:bg-amber-950/30 rounded-xl ring-1 ring-amber-200 dark:ring-amber-800/50">
+                                <p className="text-xs font-semibold text-amber-700 dark:text-amber-400 uppercase tracking-wider mb-2">Alasan Koreksi</p>
+                                <p className="text-sm text-amber-900 dark:text-amber-100 leading-relaxed">
+                                  {selectedEntry.sourceDetails.correctionReason}
+                                </p>
                               </div>
-                            ))}
-                          </div>
-                          <div className="flex items-center gap-2 p-3 bg-muted/50 rounded-lg text-muted-foreground">
-                            <Info className="h-4 w-4" />
-                            <span className="text-xs">Token kadaluarsa dihapus secara otomatis oleh sistem</span>
-                          </div>
-                        </>
-                      )}
-                    </TabsContent>
-                  </Tabs>
+                            )}
+                          </>
+                        )}
+
+                        {selectedEntry.source === "refund" && (
+                          <>
+                            <div className="rounded-xl border bg-card overflow-hidden divide-y">
+                              {[
+                                { label: "Transaksi Asal", value: selectedEntry.sourceDetails?.originalTransaction || "-" },
+                                { label: "Alasan Refund", value: selectedEntry.sourceDetails?.refundReason || "-" },
+                                { label: "Operator", value: selectedEntry.sourceDetails?.operator || "-" },
+                              ].map((item) => (
+                                <div
+                                  key={item.label}
+                                  className="flex items-center justify-between px-4 py-3 hover:bg-muted/30 transition-colors"
+                                >
+                                  <span className="text-sm text-muted-foreground">{item.label}</span>
+                                  <span className="text-sm font-medium">{item.value}</span>
+                                </div>
+                              ))}
+                            </div>
+                            <Button variant="outline" className="w-full h-11 gap-2 rounded-xl font-medium hover:bg-primary/5 hover:text-primary hover:border-primary/30">
+                              <ExternalLink className="h-4 w-4" />
+                              Lihat Transaksi Asal
+                            </Button>
+                          </>
+                        )}
+
+                        {selectedEntry.source === "expired" && (
+                          <>
+                            <div className="rounded-xl border bg-card overflow-hidden divide-y">
+                              {[
+                                { label: "Tipe", value: "Token Expired" },
+                                { label: "Sumber Token", value: selectedEntry.sourceDetails?.expiredSource || "-" },
+                                { label: "Proses", value: "Otomatis Sistem" },
+                              ].map((item) => (
+                                <div
+                                  key={item.label}
+                                  className="flex items-center justify-between px-4 py-3 hover:bg-muted/30 transition-colors"
+                                >
+                                  <span className="text-sm text-muted-foreground">{item.label}</span>
+                                  <span className="text-sm font-medium">{item.value}</span>
+                                </div>
+                              ))}
+                            </div>
+                            <div className="flex items-center gap-3 p-4 bg-muted/40 rounded-xl text-muted-foreground">
+                              <Info className="h-4 w-4 shrink-0" />
+                              <span className="text-sm">Token kadaluarsa dihapus otomatis oleh sistem</span>
+                            </div>
+                          </>
+                        )}
+                      </TabsContent>
+                    </Tabs>
+                  </div>
                 </div>
               </>
             )}
