@@ -1504,122 +1504,196 @@ export default function SistemTokenPengadaan() {
 
       {/* Transaction Detail Drawer */}
       <Sheet open={drawerOpen} onOpenChange={setDrawerOpen}>
-        <SheetContent className="w-full sm:max-w-[480px] overflow-y-auto">
-          <SheetHeader>
-            <SheetTitle>Detail Transaksi</SheetTitle>
-            <SheetDescription>
-              Informasi lengkap transaksi top up
-            </SheetDescription>
-          </SheetHeader>
-          
+        <SheetContent className="w-full sm:max-w-[440px] overflow-y-auto p-0">
           {selectedTransaction && (
-            <div className="space-y-6 py-6">
-              {/* Invoice Header */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label className="text-xs text-muted-foreground">Invoice</Label>
+            <>
+              {/* Sticky Header */}
+              <div className="sticky top-0 z-10 bg-background border-b px-4 sm:px-6 py-4">
+                <div className="flex items-center justify-between mb-1">
+                  <SheetTitle className="text-base font-semibold">Detail Transaksi</SheetTitle>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="font-mono text-sm">{selectedTransaction.invoiceId}-20260115</span>
                   <Button
-                    variant="ghost"
+                    variant="outline"
                     size="sm"
-                    className="h-6 text-xs"
+                    className="h-7 text-xs px-2"
                     onClick={() => copyToClipboard(selectedTransaction.invoiceId + "-20260115")}
                   >
                     <Copy className="h-3 w-3 mr-1" />
                     Copy
                   </Button>
                 </div>
-                <p className="font-mono font-medium">{selectedTransaction.invoiceId}-20260115</p>
-              </div>
-              
-              <div className="flex items-center gap-3">
-                {getStatusBadge(selectedTransaction.status)}
-                <span className="text-sm text-muted-foreground">
-                  {selectedTransaction.date}, {selectedTransaction.timestamp} WIB
-                </span>
+                <div className="flex items-center gap-2 mt-2">
+                  {getStatusBadge(selectedTransaction.status)}
+                  <span className="text-xs text-muted-foreground">
+                    {selectedTransaction.date}, {selectedTransaction.timestamp} WIB
+                  </span>
+                </div>
               </div>
 
-              <div className="border-t pt-4 space-y-3">
-                <Label className="text-xs text-muted-foreground uppercase tracking-wide">User</Label>
-                <div className="space-y-1">
-                  <p className="font-medium">{selectedTransaction.userName}</p>
-                  <p className="text-sm text-muted-foreground">{selectedTransaction.user}</p>
-                  <p className="text-sm text-muted-foreground">User ID: USR-{Math.floor(Math.random() * 90000) + 10000}</p>
-                </div>
-                <Button variant="link" className="p-0 h-auto text-sm">
-                  Lihat Profil <ExternalLink className="h-3 w-3 ml-1" />
-                </Button>
-              </div>
+              {/* Content with Tabs */}
+              <div className="px-4 sm:px-6 py-4">
+                <Tabs defaultValue="info" className="w-full">
+                  <TabsList className="w-full grid grid-cols-3 h-9 mb-4">
+                    <TabsTrigger value="info" className="text-xs">Info</TabsTrigger>
+                    <TabsTrigger value="payment" className="text-xs">Pembayaran</TabsTrigger>
+                    <TabsTrigger value="ledger" className="text-xs">Ledger</TabsTrigger>
+                  </TabsList>
 
-              <div className="border-t pt-4 space-y-3">
-                <Label className="text-xs text-muted-foreground uppercase tracking-wide">Detail Pembelian</Label>
-                <div className="flex items-center gap-2">
-                  {getTypeBadge(selectedTransaction.type)}
-                  <span className="text-sm">{selectedTransaction.type === "bundle" ? "Bundle Purchase" : "Custom Purchase"}</span>
-                </div>
-                <p className="text-sm">Jumlah Token: <span className="font-medium">{formatCurrency(selectedTransaction.tokens)} token</span></p>
-                
-                {selectedTransaction.type === "custom" && (
-                  <div className="p-3 bg-muted/50 rounded-lg space-y-2 text-xs sm:text-sm">
-                    <p className="font-medium">Breakdown Harga:</p>
-                    <p>• 100 token @ Rp 1,000 (tier 1, 0%) = Rp 100,000</p>
-                    <p>• 400 token @ Rp 950 (tier 2, diskon 5%) = Rp 380,000</p>
-                    <p>• 250 token @ Rp 900 (tier 3, diskon 10%) = Rp 225,000</p>
-                    <div className="pt-2 border-t font-medium">
-                      <p>Total: Rp {formatCurrency(selectedTransaction.amount)}</p>
-                      <p>Rata-rata: Rp {formatCurrency(Math.round(selectedTransaction.amount / selectedTransaction.tokens))}/token</p>
+                  {/* Tab: Info */}
+                  <TabsContent value="info" className="space-y-4 mt-0">
+                    {/* User Info - Compact Table */}
+                    <div className="rounded-lg border overflow-hidden">
+                      <div className="bg-muted/50 px-3 py-2 border-b">
+                        <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">User</span>
+                      </div>
+                      <div className="divide-y text-sm">
+                        <div className="grid grid-cols-[100px_1fr] items-center">
+                          <span className="px-3 py-2 text-muted-foreground bg-muted/30">Nama</span>
+                          <span className="px-3 py-2 font-medium">{selectedTransaction.userName}</span>
+                        </div>
+                        <div className="grid grid-cols-[100px_1fr] items-center">
+                          <span className="px-3 py-2 text-muted-foreground bg-muted/30">Email</span>
+                          <span className="px-3 py-2 text-primary">{selectedTransaction.user}</span>
+                        </div>
+                        <div className="grid grid-cols-[100px_1fr] items-center">
+                          <span className="px-3 py-2 text-muted-foreground bg-muted/30">User ID</span>
+                          <div className="px-3 py-2 flex items-center gap-2">
+                            <span className="font-mono text-xs">USR-{Math.floor(Math.random() * 90000) + 10000}</span>
+                            <Button variant="link" className="p-0 h-auto text-xs">
+                              <ExternalLink className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                )}
-                
-                {selectedTransaction.type === "bundle" && (
-                  <p className="text-sm">Total Bayar: <span className="font-medium">Rp {formatCurrency(selectedTransaction.amount)}</span></p>
-                )}
-              </div>
 
-              <div className="border-t pt-4 space-y-3">
-                <Label className="text-xs text-muted-foreground uppercase tracking-wide">Pembayaran</Label>
-                <div className="grid grid-cols-2 gap-2 text-sm">
-                  <span className="text-muted-foreground">Metode:</span>
-                  <span>GoPay</span>
-                  <span className="text-muted-foreground">Gateway:</span>
-                  <span>Midtrans</span>
-                  <span className="text-muted-foreground">Status:</span>
-                  <span className="text-emerald-600">Success</span>
-                </div>
-              </div>
+                    {/* Purchase Info - Compact Table */}
+                    <div className="rounded-lg border overflow-hidden">
+                      <div className="bg-muted/50 px-3 py-2 border-b">
+                        <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Pembelian</span>
+                      </div>
+                      <div className="divide-y text-sm">
+                        <div className="grid grid-cols-[100px_1fr] items-center">
+                          <span className="px-3 py-2 text-muted-foreground bg-muted/30">Jenis</span>
+                          <div className="px-3 py-2">{getTypeBadge(selectedTransaction.type)}</div>
+                        </div>
+                        <div className="grid grid-cols-[100px_1fr] items-center">
+                          <span className="px-3 py-2 text-muted-foreground bg-muted/30">Token</span>
+                          <span className="px-3 py-2 font-medium">{formatCurrency(selectedTransaction.tokens)} token</span>
+                        </div>
+                        <div className="grid grid-cols-[100px_1fr] items-center">
+                          <span className="px-3 py-2 text-muted-foreground bg-muted/30">Total</span>
+                          <span className="px-3 py-2 font-medium">Rp {formatCurrency(selectedTransaction.amount)}</span>
+                        </div>
+                      </div>
+                    </div>
 
-              <div className="border-t pt-4 space-y-3">
-                <Label className="text-xs text-muted-foreground uppercase tracking-wide">Token Ledger</Label>
-                <div className="grid grid-cols-2 gap-2 text-sm">
-                  <span className="text-muted-foreground">Ledger Entry:</span>
-                  <span className="font-mono">LED-{Math.floor(Math.random() * 9000) + 1000}</span>
-                  <span className="text-muted-foreground">Token Masuk:</span>
-                  <span className="text-emerald-600 font-medium">+{formatCurrency(selectedTransaction.tokens)}</span>
-                  <span className="text-muted-foreground">Saldo Sebelum:</span>
-                  <span>{formatCurrency(Math.floor(Math.random() * 1000))}</span>
-                  <span className="text-muted-foreground">Saldo Setelah:</span>
-                  <span className="font-medium">{formatCurrency(Math.floor(Math.random() * 1000) + selectedTransaction.tokens)}</span>
-                </div>
-              </div>
+                    {/* Breakdown for Custom */}
+                    {selectedTransaction.type === "custom" && (
+                      <div className="rounded-lg border p-3 bg-muted/30 space-y-2 text-xs">
+                        <p className="font-medium text-sm">Breakdown Harga:</p>
+                        <p>• 100 token @ Rp 1,000 (tier 1) = Rp 100,000</p>
+                        <p>• 400 token @ Rp 950 (tier 2, -5%) = Rp 380,000</p>
+                        <p>• 250 token @ Rp 900 (tier 3, -10%) = Rp 225,000</p>
+                        <div className="pt-2 border-t text-sm font-medium">
+                          <p>Rata-rata: Rp {formatCurrency(Math.round(selectedTransaction.amount / selectedTransaction.tokens))}/token</p>
+                        </div>
+                      </div>
+                    )}
+                  </TabsContent>
 
-              <div className="border-t pt-4 space-y-3">
-                <Label className="text-xs text-muted-foreground uppercase tracking-wide">Metadata</Label>
-                <div className="grid grid-cols-2 gap-2 text-sm">
-                  <span className="text-muted-foreground">IP Address:</span>
-                  <span>103.xx.xx.xx</span>
-                  <span className="text-muted-foreground">Device:</span>
-                  <span>Mobile - Android 13</span>
-                  <span className="text-muted-foreground">Location:</span>
-                  <span>Surabaya, Jawa Timur</span>
-                </div>
-              </div>
+                  {/* Tab: Payment */}
+                  <TabsContent value="payment" className="mt-0">
+                    <div className="rounded-lg border overflow-hidden">
+                      <div className="bg-muted/50 px-3 py-2 border-b">
+                        <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Pembayaran</span>
+                      </div>
+                      <div className="divide-y text-sm">
+                        <div className="grid grid-cols-[100px_1fr] items-center">
+                          <span className="px-3 py-2 text-muted-foreground bg-muted/30">Metode</span>
+                          <span className="px-3 py-2">GoPay</span>
+                        </div>
+                        <div className="grid grid-cols-[100px_1fr] items-center">
+                          <span className="px-3 py-2 text-muted-foreground bg-muted/30">Gateway</span>
+                          <span className="px-3 py-2">Midtrans</span>
+                        </div>
+                        <div className="grid grid-cols-[100px_1fr] items-center">
+                          <span className="px-3 py-2 text-muted-foreground bg-muted/30">Status</span>
+                          <span className="px-3 py-2 text-emerald-600 font-medium">Success</span>
+                        </div>
+                        <div className="grid grid-cols-[100px_1fr] items-center">
+                          <span className="px-3 py-2 text-muted-foreground bg-muted/30">Gateway Ref</span>
+                          <div className="px-3 py-2 flex items-center gap-2">
+                            <span className="font-mono text-xs">MT-2026-xxxx-xxxx</span>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-5 w-5"
+                              onClick={() => copyToClipboard("MT-2026-xxxx-xxxx")}
+                            >
+                              <Copy className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-[100px_1fr] items-center">
+                          <span className="px-3 py-2 text-muted-foreground bg-muted/30">Paid At</span>
+                          <span className="px-3 py-2 text-xs">{selectedTransaction.date}, {selectedTransaction.timestamp}:45 WIB</span>
+                        </div>
+                      </div>
+                    </div>
+                  </TabsContent>
 
-              <div className="pt-4">
-                <Button variant="outline" className="w-full" onClick={() => setDrawerOpen(false)}>
-                  Tutup
-                </Button>
+                  {/* Tab: Ledger */}
+                  <TabsContent value="ledger" className="space-y-4 mt-0">
+                    <div className="rounded-lg border overflow-hidden">
+                      <div className="bg-muted/50 px-3 py-2 border-b">
+                        <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Token Ledger</span>
+                      </div>
+                      <div className="divide-y text-sm">
+                        <div className="grid grid-cols-[100px_1fr] items-center">
+                          <span className="px-3 py-2 text-muted-foreground bg-muted/30">Entry ID</span>
+                          <span className="px-3 py-2 font-mono text-xs">LED-{Math.floor(Math.random() * 9000) + 1000}</span>
+                        </div>
+                        <div className="grid grid-cols-[100px_1fr] items-center">
+                          <span className="px-3 py-2 text-muted-foreground bg-muted/30">Token In</span>
+                          <span className="px-3 py-2 text-emerald-600 font-medium">+{formatCurrency(selectedTransaction.tokens)}</span>
+                        </div>
+                        <div className="grid grid-cols-[100px_1fr] items-center">
+                          <span className="px-3 py-2 text-muted-foreground bg-muted/30">Sebelum</span>
+                          <span className="px-3 py-2">{formatCurrency(Math.floor(Math.random() * 1000))}</span>
+                        </div>
+                        <div className="grid grid-cols-[100px_1fr] items-center">
+                          <span className="px-3 py-2 text-muted-foreground bg-muted/30">Setelah</span>
+                          <span className="px-3 py-2 font-medium">{formatCurrency(Math.floor(Math.random() * 1000) + selectedTransaction.tokens)}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="rounded-lg border overflow-hidden">
+                      <div className="bg-muted/50 px-3 py-2 border-b">
+                        <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Metadata</span>
+                      </div>
+                      <div className="divide-y text-sm">
+                        <div className="grid grid-cols-[100px_1fr] items-center">
+                          <span className="px-3 py-2 text-muted-foreground bg-muted/30">IP</span>
+                          <span className="px-3 py-2 font-mono text-xs">103.xx.xx.xx</span>
+                        </div>
+                        <div className="grid grid-cols-[100px_1fr] items-center">
+                          <span className="px-3 py-2 text-muted-foreground bg-muted/30">Device</span>
+                          <span className="px-3 py-2 text-xs">Mobile - Android 13</span>
+                        </div>
+                        <div className="grid grid-cols-[100px_1fr] items-center">
+                          <span className="px-3 py-2 text-muted-foreground bg-muted/30">Location</span>
+                          <span className="px-3 py-2 text-xs">Surabaya, Jawa Timur</span>
+                        </div>
+                      </div>
+                    </div>
+                  </TabsContent>
+                </Tabs>
               </div>
-            </div>
+            </>
           )}
         </SheetContent>
       </Sheet>
