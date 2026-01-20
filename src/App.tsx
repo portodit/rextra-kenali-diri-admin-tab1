@@ -9,6 +9,7 @@ import KamusKarierMasterData from "./pages/KamusKarierMasterData";
 import ProfesiDetail from "./pages/ProfesiDetail";
 import ProfesiEdit from "./pages/ProfesiEdit";
 import MembershipFiturHakAkses from "./pages/MembershipFiturHakAkses";
+import MembershipStatusPage from "./pages/MembershipStatusPage";
 import SistemTokenIkhtisar from "./pages/SistemTokenIkhtisar";
 import SistemTokenPengadaan from "./pages/SistemTokenPengadaan";
 import SistemTokenLedger from "./pages/SistemTokenLedger";
@@ -29,6 +30,7 @@ const App = () => (
           <Route path="/kamus-karier/master-data/profesi/:id" element={<ProfesiDetail />} />
           <Route path="/kamus-karier/master-data/profesi/:id/edit" element={<ProfesiEdit />} />
           <Route path="/membership/fitur-hak-akses" element={<MembershipFiturHakAkses />} />
+          <Route path="/membership/status" element={<MembershipStatusPage />} />
           <Route path="/sistem-token/ikhtisar" element={<SistemTokenIkhtisar />} />
           <Route path="/sistem-token/pengadaan" element={<SistemTokenPengadaan />} />
           <Route path="/sistem-token/ledger" element={<SistemTokenLedger />} />
