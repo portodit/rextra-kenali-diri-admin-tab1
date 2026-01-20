@@ -11,7 +11,6 @@ import {
   Edit2, 
   RefreshCw, 
   Save,
-  X,
   Info,
   AlertTriangle,
   Check,
@@ -45,6 +44,7 @@ export function MembershipDetailSection({
     setConfig(status.config);
     setHasChanges(false);
     setErrors({});
+    setActiveTab("akses");
   }, [status.id]);
 
   const updateConfig = (updates: Partial<typeof config>) => {
@@ -113,7 +113,6 @@ export function MembershipDetailSection({
     }
     
     setIsSaving(true);
-    // Simulate API call
     await new Promise(r => setTimeout(r, 1000));
     onSaveConfig(config);
     setHasChanges(false);
@@ -276,7 +275,6 @@ export function MembershipDetailSection({
         {/* Right Column - Configuration */}
         <Card>
           <CardContent className="pt-6">
-            {/* Button Group Navigation - Different for Paid vs Unpaid */}
             {isUnpaid ? (
               /* Unpaid: Only show Access Mapping (no tabs needed) */
               <div className="space-y-6">
@@ -285,6 +283,7 @@ export function MembershipDetailSection({
             ) : (
               /* Paid: Show all 3 tabs */
               <>
+                {/* Button Group Navigation */}
                 <div className="flex gap-2 mb-6">
                   <Button
                     variant={activeTab === "akses" ? "default" : "outline"}
@@ -331,15 +330,7 @@ export function MembershipDetailSection({
 
                 {/* Tab Content: Pembiayaan & Token */}
                 {activeTab === "pembiayaan" && (
-                {isUnpaid ? (
-                  <Alert className="bg-muted/50">
-                    <Info className="h-4 w-4" />
-                    <AlertDescription>
-                      Konfigurasi pembiayaan & token hanya berlaku untuk Paid Membership.
-                    </AlertDescription>
-                  </Alert>
-                ) : (
-                  <>
+                  <div className="space-y-6">
                     {/* Mode Selection */}
                     <div className="space-y-3">
                       <Label className="text-sm font-medium">Mode Pengaturan</Label>
@@ -547,19 +538,12 @@ export function MembershipDetailSection({
                         </CardContent>
                       </Card>
                     )}
+                  </div>
                 )}
 
                 {/* Tab Content: Reward Poin */}
                 {activeTab === "reward" && (
-                {isUnpaid ? (
-                  <Alert className="bg-muted/50">
-                    <Info className="h-4 w-4" />
-                    <AlertDescription>
-                      Konfigurasi reward poin hanya berlaku untuk Paid Membership.
-                    </AlertDescription>
-                  </Alert>
-                ) : (
-                  <>
+                  <div className="space-y-6">
                     <div className="space-y-3">
                       <Label className="text-sm font-medium">Mode Reward</Label>
                       <RadioGroup 
@@ -638,48 +622,48 @@ export function MembershipDetailSection({
                         </CardContent>
                       </Card>
                     )}
-                  </>
+                  </div>
                 )}
-              </TabsContent>
-            </Tabs>
 
-            {/* Action Footer */}
-            {!isUnpaid && (
-              <div className="flex items-center justify-end gap-3 mt-6 pt-6 border-t">
-                <Button 
-                  variant="outline" 
-                  onClick={handleCancel}
-                  disabled={isSaving}
-                >
-                  Batalkan
-                </Button>
-                <Button 
-                  variant="outline" 
-                  onClick={handleReset}
-                  disabled={!hasChanges || isSaving}
-                  className="gap-2"
-                >
-                  <RefreshCw className="h-4 w-4" />
-                  Reset
-                </Button>
-                <Button 
-                  onClick={handleSave}
-                  disabled={!hasChanges || isSaving}
-                  className="gap-2 min-w-32"
-                >
-                  {isSaving ? (
-                    <>
-                      <RefreshCw className="h-4 w-4 animate-spin" />
-                      Menyimpan...
-                    </>
-                  ) : (
-                    <>
-                      <Save className="h-4 w-4" />
-                      Simpan Perubahan
-                    </>
-                  )}
-                </Button>
-              </div>
+                {/* Action Footer - Only show for pembiayaan and reward tabs */}
+                {(activeTab === "pembiayaan" || activeTab === "reward") && (
+                  <div className="flex items-center justify-end gap-3 mt-6 pt-6 border-t">
+                    <Button 
+                      variant="outline" 
+                      onClick={handleCancel}
+                      disabled={isSaving}
+                    >
+                      Batalkan
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      onClick={handleReset}
+                      disabled={!hasChanges || isSaving}
+                      className="gap-2"
+                    >
+                      <RefreshCw className="h-4 w-4" />
+                      Reset
+                    </Button>
+                    <Button 
+                      onClick={handleSave}
+                      disabled={!hasChanges || isSaving}
+                      className="gap-2 min-w-32"
+                    >
+                      {isSaving ? (
+                        <>
+                          <RefreshCw className="h-4 w-4 animate-spin" />
+                          Menyimpan...
+                        </>
+                      ) : (
+                        <>
+                          <Save className="h-4 w-4" />
+                          Simpan Perubahan
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                )}
+              </>
             )}
           </CardContent>
         </Card>
