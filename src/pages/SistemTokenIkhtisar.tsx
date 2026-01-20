@@ -31,6 +31,7 @@ import {
 import {
   Tooltip,
   TooltipContent,
+  TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import {
@@ -515,6 +516,7 @@ export default function SistemTokenIkhtisar() {
   );
 
   return (
+    <TooltipProvider>
     <DashboardLayout>
       <div className="space-y-4 sm:space-y-6">
         {/* Breadcrumb - Hidden on mobile */}
@@ -561,14 +563,14 @@ export default function SistemTokenIkhtisar() {
 
         {/* Control Bar - Mobile optimized */}
         <div className="space-y-3 sm:space-y-4">
-          {/* Tabs - Scrollable on mobile */}
-          <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
-            <Tabs value={selectedTab} onValueChange={(v) => setSelectedTab(v as TabType)} className="w-full xl:w-auto shrink-0">
-              <TabsList className="w-full min-w-max grid grid-cols-4 xl:inline-flex">
-                <TabsTrigger value="semua" className="text-xs sm:text-sm px-2 sm:px-3">Semua</TabsTrigger>
-                <TabsTrigger value="topup" className="text-xs sm:text-sm px-2 sm:px-3">Top Up</TabsTrigger>
-                <TabsTrigger value="alokasi" className="text-xs sm:text-sm px-2 sm:px-3">Alokasi</TabsTrigger>
-                <TabsTrigger value="pemakaian" className="text-xs sm:text-sm px-2 sm:px-3">Pemakaian</TabsTrigger>
+          {/* Tabs - Fit content width */}
+          <div className="flex justify-center">
+            <Tabs value={selectedTab} onValueChange={(v) => setSelectedTab(v as TabType)}>
+              <TabsList className="inline-flex h-10 p-1 bg-muted/60 rounded-xl">
+                <TabsTrigger value="semua" className="text-xs sm:text-sm px-3 sm:px-4 rounded-lg data-[state=active]:bg-card data-[state=active]:shadow-sm">Semua</TabsTrigger>
+                <TabsTrigger value="topup" className="text-xs sm:text-sm px-3 sm:px-4 rounded-lg data-[state=active]:bg-card data-[state=active]:shadow-sm">Top Up</TabsTrigger>
+                <TabsTrigger value="alokasi" className="text-xs sm:text-sm px-3 sm:px-4 rounded-lg data-[state=active]:bg-card data-[state=active]:shadow-sm">Alokasi</TabsTrigger>
+                <TabsTrigger value="pemakaian" className="text-xs sm:text-sm px-3 sm:px-4 rounded-lg data-[state=active]:bg-card data-[state=active]:shadow-sm">Pemakaian</TabsTrigger>
               </TabsList>
             </Tabs>
           </div>
@@ -611,22 +613,21 @@ export default function SistemTokenIkhtisar() {
               </Select>
             </div>
           </div>
+        </div>
 
-          {/* Demo State Toggle (for development) - Scrollable on mobile */}
-          <div className="flex gap-2 flex-wrap overflow-x-auto">
-            <span className="text-xs text-muted-foreground mr-2 shrink-0">Demo:</span>
-            {(["data", "loading", "empty", "error"] as ViewState[]).map((state) => (
-              <Button
-                key={state}
-                variant={viewState === state ? "default" : "outline"}
-                size="sm"
-                onClick={() => setViewState(state)}
-                className="text-xs h-7 shrink-0"
-              >
-                {state}
-              </Button>
-            ))}
-          </div>
+        {/* Floating Demo State Toggle - Fixed position for dev only */}
+        <div className="fixed bottom-4 right-4 z-50 flex items-center gap-1 p-1 bg-card/95 backdrop-blur-sm border shadow-lg rounded-full">
+          {(["data", "loading", "empty", "error"] as ViewState[]).map((state) => (
+            <Button
+              key={state}
+              variant={viewState === state ? "default" : "ghost"}
+              size="sm"
+              onClick={() => setViewState(state)}
+              className={`text-xs h-7 px-2 rounded-full ${viewState === state ? "" : "text-muted-foreground"}`}
+            >
+              {state === "data" ? "📊" : state === "loading" ? "⏳" : state === "empty" ? "📭" : "❌"}
+            </Button>
+          ))}
         </div>
 
         {/* Content based on state */}
@@ -695,56 +696,57 @@ export default function SistemTokenIkhtisar() {
               </div>
             </div>
 
-            {/* Alerts Panel - Collapsible with counter */}
+            {/* Modern Alerts Panel */}
             {alertsData.length > 0 && (
-              <Collapsible open={alertsExpanded} onOpenChange={setAlertsExpanded}>
-                <Card className="border-amber-200 dark:border-amber-800 bg-amber-50/50 dark:bg-amber-950/20">
+              <div className="rounded-xl border bg-gradient-to-r from-amber-50 to-orange-50/50 dark:from-amber-950/30 dark:to-orange-950/20 overflow-hidden">
+                <Collapsible open={alertsExpanded} onOpenChange={setAlertsExpanded}>
                   <CollapsibleTrigger asChild>
-                    <CardHeader className="py-3 px-4 cursor-pointer hover:bg-amber-100/50 dark:hover:bg-amber-900/20 transition-colors">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <AlertTriangle className="h-4 w-4 text-amber-600" />
-                          <CardTitle className="text-sm font-medium text-amber-800 dark:text-amber-200">
-                            Perlu Ditinjau
-                          </CardTitle>
-                          <Badge variant="secondary" className="bg-amber-200 dark:bg-amber-800 text-amber-800 dark:text-amber-200">
-                            {alertsData.length}
-                          </Badge>
+                    <button className="w-full px-4 py-3 flex items-center justify-between hover:bg-amber-100/30 dark:hover:bg-amber-900/20 transition-colors">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-amber-500/15 flex items-center justify-center">
+                          <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
                         </div>
-                        <ChevronDown className={`h-4 w-4 text-amber-600 transition-transform duration-200 ${alertsExpanded ? "rotate-180" : ""}`} />
+                        <div className="text-left">
+                          <p className="text-sm font-medium text-foreground">Perlu Ditinjau</p>
+                          <p className="text-xs text-muted-foreground">{alertsData.length} item memerlukan perhatian</p>
+                        </div>
                       </div>
-                    </CardHeader>
+                      <div className="flex items-center gap-2">
+                        <Badge className="bg-amber-500/20 text-amber-700 dark:text-amber-300 border-0 font-semibold">
+                          {alertsData.length}
+                        </Badge>
+                        <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform duration-200 ${alertsExpanded ? "rotate-180" : ""}`} />
+                      </div>
+                    </button>
                   </CollapsibleTrigger>
                   <CollapsibleContent>
-                    <CardContent className="pt-0 pb-3 px-4">
-                      <div className="divide-y divide-amber-200 dark:divide-amber-800">
-                        {alertsData.map((alert, index) => (
-                          <div
-                            key={alert.id}
-                            className={`flex items-center justify-between py-3 ${index === 0 ? "pt-0" : ""}`}
-                          >
-                            <div className="flex items-center gap-3">
-                              <div className={`w-2 h-2 rounded-full ${alert.type === "error" ? "bg-red-500" : "bg-amber-500"}`} />
-                              <span className="text-sm text-amber-700 dark:text-amber-300">
-                                {alert.message}
-                              </span>
-                            </div>
-                            <Button 
-                              variant="ghost" 
-                              size="sm" 
-                              className="h-7 text-xs text-amber-700 hover:text-amber-900 hover:bg-amber-200/50"
-                              onClick={() => navigate(alert.route)}
-                            >
-                              Tinjau
-                              <ExternalLink className="h-3 w-3 ml-1" />
-                            </Button>
+                    <div className="px-4 pb-4 space-y-2">
+                      {alertsData.map((alert) => (
+                        <div
+                          key={alert.id}
+                          className="flex items-center justify-between p-3 rounded-lg bg-card/80 ring-1 ring-border/50 hover:ring-border transition-all group"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className={`w-2 h-2 rounded-full shrink-0 ${alert.type === "error" ? "bg-destructive" : "bg-amber-500"}`} />
+                            <span className="text-sm text-foreground">
+                              {alert.message}
+                            </span>
                           </div>
-                        ))}
-                      </div>
-                    </CardContent>
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="h-8 px-3 text-xs font-medium text-primary hover:text-primary hover:bg-primary/10 opacity-70 group-hover:opacity-100 transition-opacity"
+                            onClick={(e) => { e.stopPropagation(); navigate(alert.route); }}
+                          >
+                            Tinjau
+                            <ExternalLink className="h-3 w-3 ml-1.5" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
                   </CollapsibleContent>
-                </Card>
-              </Collapsible>
+                </Collapsible>
+              </div>
             )}
 
             {/* Chart */}
@@ -925,5 +927,6 @@ export default function SistemTokenIkhtisar() {
         )}
       </div>
     </DashboardLayout>
+    </TooltipProvider>
   );
 }
