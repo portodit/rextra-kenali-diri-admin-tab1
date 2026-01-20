@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { 
@@ -19,6 +18,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { MembershipStatus } from "./MembershipStatusCard";
+import { AccessMappingTab } from "./AccessMappingTab";
 import { toast } from "@/hooks/use-toast";
 
 interface MembershipDetailSectionProps {
@@ -34,7 +34,7 @@ export function MembershipDetailSection({
   onEditMetadata,
   onSaveConfig,
 }: MembershipDetailSectionProps) {
-  const [activeTab, setActiveTab] = useState("pembiayaan");
+  const [activeTab, setActiveTab] = useState("akses");
   const [config, setConfig] = useState(status.config);
   const [hasChanges, setHasChanges] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -273,17 +273,64 @@ export function MembershipDetailSection({
           </CardContent>
         </Card>
 
-        {/* Right Column - Configuration Tabs */}
+        {/* Right Column - Configuration */}
         <Card>
           <CardContent className="pt-6">
-            <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <TabsList className="w-fit mb-6">
-                <TabsTrigger value="pembiayaan" className="px-6">Pembiayaan & Token</TabsTrigger>
-                <TabsTrigger value="reward" className="px-6">Reward Poin</TabsTrigger>
-              </TabsList>
+            {/* Button Group Navigation - Different for Paid vs Unpaid */}
+            {isUnpaid ? (
+              /* Unpaid: Only show Access Mapping (no tabs needed) */
+              <div className="space-y-6">
+                <AccessMappingTab packageId={status.id} packageName={status.name} />
+              </div>
+            ) : (
+              /* Paid: Show all 3 tabs */
+              <>
+                <div className="flex gap-2 mb-6">
+                  <Button
+                    variant={activeTab === "akses" ? "default" : "outline"}
+                    onClick={() => setActiveTab("akses")}
+                    className={cn(
+                      "h-10 px-4 rounded-[10px] font-medium",
+                      activeTab === "akses" 
+                        ? "bg-primary text-primary-foreground" 
+                        : "bg-muted/50 text-muted-foreground border-border hover:bg-muted"
+                    )}
+                  >
+                    Konfigurasi Akses
+                  </Button>
+                  <Button
+                    variant={activeTab === "pembiayaan" ? "default" : "outline"}
+                    onClick={() => setActiveTab("pembiayaan")}
+                    className={cn(
+                      "h-10 px-4 rounded-[10px] font-medium",
+                      activeTab === "pembiayaan" 
+                        ? "bg-primary text-primary-foreground" 
+                        : "bg-muted/50 text-muted-foreground border-border hover:bg-muted"
+                    )}
+                  >
+                    Pembiayaan & Token
+                  </Button>
+                  <Button
+                    variant={activeTab === "reward" ? "default" : "outline"}
+                    onClick={() => setActiveTab("reward")}
+                    className={cn(
+                      "h-10 px-4 rounded-[10px] font-medium",
+                      activeTab === "reward" 
+                        ? "bg-primary text-primary-foreground" 
+                        : "bg-muted/50 text-muted-foreground border-border hover:bg-muted"
+                    )}
+                  >
+                    Reward Poin
+                  </Button>
+                </div>
 
-              {/* Tab 1: Pembiayaan & Token */}
-              <TabsContent value="pembiayaan" className="space-y-6 mt-0">
+                {/* Tab Content: Konfigurasi Akses */}
+                {activeTab === "akses" && (
+                  <AccessMappingTab packageId={status.id} packageName={status.name} />
+                )}
+
+                {/* Tab Content: Pembiayaan & Token */}
+                {activeTab === "pembiayaan" && (
                 {isUnpaid ? (
                   <Alert className="bg-muted/50">
                     <Info className="h-4 w-4" />
@@ -500,12 +547,10 @@ export function MembershipDetailSection({
                         </CardContent>
                       </Card>
                     )}
-                  </>
                 )}
-              </TabsContent>
 
-              {/* Tab 2: Reward Poin */}
-              <TabsContent value="reward" className="space-y-6 mt-0">
+                {/* Tab Content: Reward Poin */}
+                {activeTab === "reward" && (
                 {isUnpaid ? (
                   <Alert className="bg-muted/50">
                     <Info className="h-4 w-4" />

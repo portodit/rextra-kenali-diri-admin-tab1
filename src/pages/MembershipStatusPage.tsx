@@ -48,6 +48,28 @@ import emblemMax from "@/assets/emblem-max.png";
 // Demo data
 const demoStatuses: MembershipStatus[] = [
   {
+    id: "standard",
+    name: "Standard",
+    category: "unpaid",
+    isActive: true,
+    emblem: emblemStarter,
+    price: 0,
+    tokenPerMonth: null,
+    pointsActive: false,
+    description: "Akses standar gratis untuk semua pengguna REXTRA.",
+    lastUpdated: "20/01/2025 14:30",
+    lastUpdatedBy: "Admin Eko",
+    config: {
+      mode: "auto",
+      basePrice: 0,
+      baseToken: 0,
+      discounts: { 3: 0, 6: 0, 12: 0 },
+      bonusTokens: { 3: 0, 6: 0, 12: 0 },
+      rewardMode: "default",
+      customRewards: { 1: 0, 3: 0, 6: 0, 12: 0 },
+    },
+  },
+  {
     id: "starter",
     name: "Starter",
     category: "unpaid",

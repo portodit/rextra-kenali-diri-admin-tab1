@@ -46,10 +46,12 @@ export function MembershipStatusCard({ status, onSelect, isSelected }: Membershi
   // Card gradient based on tier
   const getCardGradient = () => {
     switch (status.id) {
+      case "standard":
+        return "bg-gradient-to-br from-slate-50 via-gray-50/50 to-slate-100/30";
       case "starter":
         return "bg-gradient-to-br from-amber-50 via-orange-50/50 to-amber-100/30";
       case "basic":
-        return "bg-gradient-to-br from-slate-50 via-gray-50/50 to-slate-100/30";
+        return "bg-gradient-to-br from-emerald-50 via-green-50/50 to-teal-100/30";
       case "pro":
         return "bg-gradient-to-br from-cyan-50 via-sky-50/50 to-blue-100/30";
       case "max":
