@@ -812,182 +812,112 @@ export default function SistemTokenIkhtisar() {
               </CardContent>
             </Card>
 
-            {/* Activity Table */}
+            {/* Activity Table - Simplified, no pagination */}
             <Card>
-              <CardHeader className="flex flex-row items-start justify-between">
+              <CardHeader className="flex flex-row items-center justify-between pb-4">
                 <div>
                   <CardTitle className="text-base font-semibold">
                     Aktivitas Token Terbaru
                   </CardTitle>
                   <p className="text-sm text-muted-foreground mt-1">
-                    Daftar pergerakan token terbaru sesuai filter periode
+                    8 pergerakan token terakhir
                   </p>
                 </div>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <button className="cursor-help">
-                      <HelpCircle className="h-4 w-4 text-muted-foreground/60 hover:text-muted-foreground transition-colors" />
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent className="z-50 bg-popover max-w-xs">
-                    <p className="text-xs">
-                      Tabel ini menampilkan log aktivitas token terbaru. 
-                      Klik "Detail" untuk melihat informasi lengkap transaksi.
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="gap-2 hover:bg-primary/5 hover:text-primary hover:border-primary/30"
+                  onClick={() => navigate("/sistem-token/ledger")}
+                >
+                  Lihat Semua
+                  <ExternalLink className="h-3.5 w-3.5" />
+                </Button>
               </CardHeader>
-              <CardContent>
+              <CardContent className="pt-0">
                 <div className="overflow-x-auto">
                   <Table>
                     <TableHeader>
-                      <TableRow>
-                        <TableHead className="min-w-[100px]">Waktu</TableHead>
-                        <TableHead className="min-w-[150px]">User</TableHead>
-                        <TableHead className="min-w-[70px]">Jenis</TableHead>
-                        <TableHead className="min-w-[120px]">Sumber</TableHead>
-                        <TableHead className="min-w-[120px]">Ref ID</TableHead>
-                        <TableHead className="min-w-[100px] text-right">Jumlah</TableHead>
-                        <TableHead className="min-w-[100px] text-right">Saldo Setelah</TableHead>
-                        <TableHead className="min-w-[90px]">Status</TableHead>
-                        <TableHead className="min-w-[80px]">Aksi</TableHead>
+                      <TableRow className="bg-muted/30">
+                        <TableHead className="min-w-[90px]">Waktu</TableHead>
+                        <TableHead className="min-w-[130px]">User</TableHead>
+                        <TableHead className="min-w-[60px] text-center">Tipe</TableHead>
+                        <TableHead className="min-w-[100px]">Sumber</TableHead>
+                        <TableHead className="min-w-[100px] hidden md:table-cell">Ref ID</TableHead>
+                        <TableHead className="min-w-[90px] text-right">Jumlah</TableHead>
+                        <TableHead className="min-w-[70px] text-center hidden sm:table-cell">Status</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {activityData.map((item) => (
-                        <TableRow key={item.id}>
-                          <TableCell>
-                            <div className="text-sm">{item.waktu}</div>
-                            <div className="text-xs text-muted-foreground">{item.tanggal}</div>
+                      {activityData.slice(0, 8).map((item) => (
+                        <TableRow 
+                          key={item.id} 
+                          className="hover:bg-muted/30 cursor-pointer group"
+                          onClick={() => navigate(`/sistem-token/ledger?ref=${item.refId}`)}
+                        >
+                          <TableCell className="py-3">
+                            <div className="text-sm font-medium">{item.waktu}</div>
+                            <div className="text-xs text-muted-foreground">{item.tanggal.split(" ")[0]} {item.tanggal.split(" ")[1]}</div>
                           </TableCell>
-                          <TableCell>
-                            <div className="text-sm font-medium">{item.userName}</div>
-                            <div className="text-xs text-muted-foreground">{item.user}</div>
+                          <TableCell className="py-3">
+                            <div className="text-sm font-medium truncate max-w-[120px]">{item.userName}</div>
+                            <div className="text-xs text-muted-foreground truncate max-w-[120px] hidden sm:block">{item.user}</div>
                           </TableCell>
-                          <TableCell>
+                          <TableCell className="py-3 text-center">
                             <Badge
                               variant="outline"
                               className={
                                 item.jenis === "IN"
-                                  ? "border-emerald-500 bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400"
-                                  : "border-red-500 bg-red-50 text-red-700 dark:bg-red-950/30 dark:text-red-400"
+                                  ? "border-emerald-300 bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-700 text-xs px-2"
+                                  : "border-rose-300 bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-400 dark:border-rose-700 text-xs px-2"
                               }
                             >
-                              {item.jenis}
+                              {item.jenis === "IN" ? "↑" : "↓"} {item.jenis}
                             </Badge>
                           </TableCell>
-                          <TableCell className="text-sm">{item.sumber}</TableCell>
-                          <TableCell>
+                          <TableCell className="py-3 text-sm">{item.sumber}</TableCell>
+                          <TableCell className="py-3 hidden md:table-cell">
                             <div className="flex items-center gap-1">
-                              <code className="text-xs bg-muted px-1.5 py-0.5 rounded">
+                              <code className="text-xs bg-muted px-1.5 py-0.5 rounded font-mono">
                                 {item.refId}
                               </code>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="h-6 w-6"
-                                    onClick={() => copyToClipboard(item.refId)}
-                                  >
-                                    <Copy className="h-3 w-3" />
-                                  </Button>
-                                </TooltipTrigger>
-                                <TooltipContent className="z-50 bg-popover">
-                                  <p className="text-xs">Salin Reference ID</p>
-                                </TooltipContent>
-                              </Tooltip>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                                onClick={(e) => { e.stopPropagation(); copyToClipboard(item.refId); }}
+                              >
+                                <Copy className="h-3 w-3" />
+                              </Button>
                             </div>
                           </TableCell>
-                          <TableCell className="text-right">
+                          <TableCell className="py-3 text-right">
                             <span
                               className={
                                 item.jenis === "IN"
-                                  ? "text-emerald-600 font-medium"
-                                  : "text-red-600 font-medium"
+                                  ? "text-emerald-600 dark:text-emerald-400 font-semibold"
+                                  : "text-rose-600 dark:text-rose-400 font-semibold"
                               }
                             >
                               {item.jenis === "IN" ? "+" : "-"}
                               {formatNumber(item.jumlah)}
                             </span>
                           </TableCell>
-                          <TableCell className="text-right text-sm">
-                            {formatNumber(item.saldoSetelah)}
-                          </TableCell>
-                          <TableCell>
+                          <TableCell className="py-3 text-center hidden sm:table-cell">
                             <Badge
-                              variant={item.status === "Berhasil" ? "default" : "destructive"}
+                              variant="secondary"
                               className={
                                 item.status === "Berhasil"
-                                  ? "bg-emerald-500 hover:bg-emerald-600"
-                                  : ""
+                                  ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300 border-0"
+                                  : "bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300 border-0"
                               }
                             >
-                              {item.status}
+                              {item.status === "Berhasil" ? "✓" : "✗"}
                             </Badge>
-                          </TableCell>
-                          <TableCell>
-                            <Button 
-                              variant="ghost" 
-                              size="sm" 
-                              className="h-7 text-xs"
-                              onClick={() => navigate(`/sistem-token/riwayat?ref=${item.refId}`)}
-                            >
-                              Detail
-                            </Button>
                           </TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
                   </Table>
-                </div>
-
-                {/* Pagination - Mobile optimized */}
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mt-4 pt-4 border-t">
-                  <p className="text-xs sm:text-sm text-muted-foreground">
-                    Menampilkan 1-8 dari 96 aktivitas
-                  </p>
-                  <div className="flex items-center gap-1 sm:gap-2 w-full sm:w-auto justify-between sm:justify-end">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      disabled={currentPage === 1}
-                      onClick={() => setCurrentPage((p) => p - 1)}
-                      className="h-8 px-2 sm:px-3"
-                    >
-                      <ChevronLeft className="h-4 w-4" />
-                    </Button>
-                    <div className="flex gap-1">
-                      {[1, 2, 3].map((page) => (
-                        <Button
-                          key={page}
-                          variant={currentPage === page ? "default" : "outline"}
-                          size="sm"
-                          className="w-7 sm:w-8 h-8"
-                          onClick={() => setCurrentPage(page)}
-                        >
-                          {page}
-                        </Button>
-                      ))}
-                      <span className="px-1 sm:px-2 text-muted-foreground hidden sm:inline">...</span>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="w-7 sm:w-8 h-8 hidden sm:inline-flex"
-                        onClick={() => setCurrentPage(12)}
-                      >
-                        12
-                      </Button>
-                    </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setCurrentPage((p) => p + 1)}
-                      className="h-8 px-2 sm:px-3"
-                    >
-                      <ChevronRight className="h-4 w-4" />
-                    </Button>
-                  </div>
                 </div>
               </CardContent>
             </Card>
