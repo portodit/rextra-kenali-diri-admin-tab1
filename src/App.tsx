@@ -11,6 +11,7 @@ import ProfesiEdit from "./pages/ProfesiEdit";
 import MembershipFiturHakAkses from "./pages/MembershipFiturHakAkses";
 import SistemTokenIkhtisar from "./pages/SistemTokenIkhtisar";
 import SistemTokenPengadaan from "./pages/SistemTokenPengadaan";
+import SistemTokenLedger from "./pages/SistemTokenLedger";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ const App = () => (
           <Route path="/membership/fitur-hak-akses" element={<MembershipFiturHakAkses />} />
           <Route path="/sistem-token/ikhtisar" element={<SistemTokenIkhtisar />} />
           <Route path="/sistem-token/pengadaan" element={<SistemTokenPengadaan />} />
+          <Route path="/sistem-token/ledger" element={<SistemTokenLedger />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

@@ -270,14 +270,9 @@ export function AppSidebar({ className, onClose, isCollapsed: controlledCollapse
                 isActive={location.pathname === "/sistem-token/pengadaan"}
               />
               <SidebarDropdownItem
-                label="Token Membership"
-                href="/sistem-token/membership"
-                isActive={location.pathname === "/sistem-token/membership"}
-              />
-              <SidebarDropdownItem
-                label="Riwayat Token"
-                href="/sistem-token/riwayat"
-                isActive={location.pathname === "/sistem-token/riwayat"}
+                label="Ledger Token"
+                href="/sistem-token/ledger"
+                isActive={location.pathname === "/sistem-token/ledger"}
               />
             </SidebarItem>
             <SidebarItem
