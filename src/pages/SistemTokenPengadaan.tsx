@@ -57,10 +57,10 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
@@ -69,7 +69,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import {
-  HelpCircle,
   Search,
   Plus,
   Edit,
@@ -78,7 +77,6 @@ import {
   Package,
   Settings,
   Receipt,
-  ChevronDown,
   ChevronLeft,
   ChevronRight,
   AlertTriangle,
@@ -172,7 +170,6 @@ type ViewState = "loading" | "empty" | "error" | "data";
 export default function SistemTokenPengadaan() {
   const [viewState, setViewState] = useState<ViewState>("data");
   const [activeTab, setActiveTab] = useState("bundle");
-  const [notesExpanded, setNotesExpanded] = useState(false);
 
   // Bundle tab state
   const [bundleSearch, setBundleSearch] = useState("");
@@ -670,47 +667,31 @@ export default function SistemTokenPengadaan() {
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Pengadaan Token</h1>
-              <Tooltip>
-                <TooltipTrigger asChild>
+              <Popover>
+                <PopoverTrigger asChild>
                   <Button variant="ghost" size="icon" className="h-6 w-6 sm:h-8 sm:w-8">
-                    <HelpCircle className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground" />
+                    <Info className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground" />
                   </Button>
-                </TooltipTrigger>
-                <TooltipContent className="max-w-xs">
-                  <p>Kelola pengadaan token untuk menambah saldo pengguna melalui top up.</p>
-                </TooltipContent>
-              </Tooltip>
+                </PopoverTrigger>
+                <PopoverContent className="w-80 sm:w-96" align="start">
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2">
+                      <AlertTriangle className="h-4 w-4 text-amber-600" />
+                      <h4 className="font-semibold text-sm">Catatan Penting</h4>
+                    </div>
+                    <div className="text-xs sm:text-sm text-muted-foreground space-y-2">
+                      <p>• Pengadaan token menghasilkan penambahan saldo token dan wajib tercatat pada ledger.</p>
+                      <p>• Perubahan aturan harga dan batas pembelian berdampak pada revenue dan risiko penyalahgunaan, harus terkontrol.</p>
+                    </div>
+                  </div>
+                </PopoverContent>
+              </Popover>
             </div>
             <p className="text-sm text-muted-foreground hidden sm:block">
               Kelola paket Top Up, aturan pembelian, dan pantau transaksi pengadaan token.
             </p>
           </div>
         </div>
-
-        {/* Important Notes Callout */}
-        <Collapsible open={notesExpanded} onOpenChange={setNotesExpanded}>
-          <Card className="border-amber-200 bg-amber-50/50 dark:border-amber-900/50 dark:bg-amber-950/20">
-            <CollapsibleTrigger asChild>
-              <CardHeader className="pb-2 cursor-pointer hover:bg-amber-100/50 dark:hover:bg-amber-900/20 transition-colors">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 text-amber-600" />
-                    <CardTitle className="text-sm sm:text-base text-amber-800 dark:text-amber-200">
-                      Catatan Penting
-                    </CardTitle>
-                  </div>
-                  <ChevronDown className={`h-4 w-4 text-amber-600 transition-transform ${notesExpanded ? 'rotate-180' : ''}`} />
-                </div>
-              </CardHeader>
-            </CollapsibleTrigger>
-            <CollapsibleContent>
-              <CardContent className="pt-0 text-xs sm:text-sm text-amber-700 dark:text-amber-300 space-y-1">
-                <p>• Pengadaan token menghasilkan penambahan saldo token dan wajib tercatat pada ledger.</p>
-                <p>• Perubahan aturan harga dan batas pembelian berdampak pada revenue dan risiko penyalahgunaan, harus terkontrol.</p>
-              </CardContent>
-            </CollapsibleContent>
-          </Card>
-        </Collapsible>
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 sm:space-y-6">
