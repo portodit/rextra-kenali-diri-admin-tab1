@@ -1050,7 +1050,7 @@ export default function MembershipFiturHakAkses() {
             <div className="space-y-3 sm:space-y-4">
               <h3 className="font-semibold text-sm sm:text-base">Master Hak Akses</h3>
               
-              {/* Filters - Stack on mobile */}
+              {/* Filters and Add Button */}
               <div className="flex flex-col gap-3">
                 {/* Search */}
                 <div className="relative w-full">
@@ -1063,57 +1063,59 @@ export default function MembershipFiturHakAkses() {
                   />
                 </div>
                 
-                {/* Filter dropdowns - Grid on mobile */}
-                <div className="grid grid-cols-2 sm:flex gap-2 sm:gap-3 sm:flex-wrap">
-                  <Select value={hakAksesStatusFilter} onValueChange={(v) => setHakAksesStatusFilter(v as typeof hakAksesStatusFilter)}>
-                    <SelectTrigger className="h-9 sm:h-10 text-xs sm:text-sm sm:w-[130px]">
-                      <SelectValue placeholder="Status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Semua</SelectItem>
-                      <SelectItem value="active">Aktif</SelectItem>
-                      <SelectItem value="inactive">Nonaktif</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <Select value={hakAksesObjectFilter} onValueChange={(v) => setHakAksesObjectFilter(v as typeof hakAksesObjectFilter)}>
-                    <SelectTrigger className="h-9 sm:h-10 text-xs sm:text-sm sm:w-[160px]">
-                      <SelectValue placeholder="Objek" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Semua</SelectItem>
-                      <SelectItem value="fitur">Fitur</SelectItem>
-                      <SelectItem value="sub_fitur">Sub Fitur</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <Select value={hakAksesFiturFilter} onValueChange={setHakAksesFiturFilter}>
-                    <SelectTrigger className="h-9 sm:h-10 text-xs sm:text-sm sm:w-[140px]">
-                      <SelectValue placeholder="Fitur" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Semua</SelectItem>
-                      {fiturData.map((f) => (
-                        <SelectItem key={f.id} value={f.slug}>{f.name}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Select value={hakAksesKategoriFilter} onValueChange={setHakAksesKategoriFilter}>
-                    <SelectTrigger className="h-9 sm:h-10 text-xs sm:text-sm sm:w-[150px]">
-                      <SelectValue placeholder="Kategori" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Semua</SelectItem>
-                      {kategoriAksiData.filter((k) => k.status === "active").map((k) => (
-                        <SelectItem key={k.id} value={k.slug}>{k.name}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                {/* Filter dropdowns + Add button - Same row on desktop */}
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                  <div className="grid grid-cols-2 sm:flex gap-2 sm:gap-3 sm:flex-wrap">
+                    <Select value={hakAksesStatusFilter} onValueChange={(v) => setHakAksesStatusFilter(v as typeof hakAksesStatusFilter)}>
+                      <SelectTrigger className="h-9 sm:h-10 text-xs sm:text-sm sm:w-[130px]">
+                        <SelectValue placeholder="Status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Semua</SelectItem>
+                        <SelectItem value="active">Aktif</SelectItem>
+                        <SelectItem value="inactive">Nonaktif</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Select value={hakAksesObjectFilter} onValueChange={(v) => setHakAksesObjectFilter(v as typeof hakAksesObjectFilter)}>
+                      <SelectTrigger className="h-9 sm:h-10 text-xs sm:text-sm sm:w-[160px]">
+                        <SelectValue placeholder="Objek" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Semua</SelectItem>
+                        <SelectItem value="fitur">Fitur</SelectItem>
+                        <SelectItem value="sub_fitur">Sub Fitur</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Select value={hakAksesFiturFilter} onValueChange={setHakAksesFiturFilter}>
+                      <SelectTrigger className="h-9 sm:h-10 text-xs sm:text-sm sm:w-[140px]">
+                        <SelectValue placeholder="Fitur" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Semua</SelectItem>
+                        {fiturData.map((f) => (
+                          <SelectItem key={f.id} value={f.slug}>{f.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Select value={hakAksesKategoriFilter} onValueChange={setHakAksesKategoriFilter}>
+                      <SelectTrigger className="h-9 sm:h-10 text-xs sm:text-sm sm:w-[150px]">
+                        <SelectValue placeholder="Kategori" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Semua</SelectItem>
+                        {kategoriAksiData.filter((k) => k.status === "active").map((k) => (
+                          <SelectItem key={k.id} value={k.slug}>{k.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  {/* Add button - Right aligned */}
+                  <Button onClick={openAddHakAksesModal} size="sm" className="w-full sm:w-auto h-9 sm:h-10 shrink-0">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Tambah Hak Akses
+                  </Button>
                 </div>
-                
-                {/* Add button */}
-                <Button onClick={openAddHakAksesModal} size="sm" className="w-full sm:w-auto h-9 sm:h-10">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Tambah Hak Akses
-                </Button>
               </div>
 
               {/* Table */}
