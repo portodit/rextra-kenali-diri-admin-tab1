@@ -920,20 +920,25 @@ export default function MembershipFiturHakAkses() {
               </p>
             </div>
 
-            {/* Callout */}
-            <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
-              <div className="flex gap-3">
-                <AlertTriangle className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
-                <div className="space-y-2 text-sm">
-                  <p className="font-medium text-amber-800 dark:text-amber-200">Catatan Penting</p>
-                  <ul className="list-disc list-inside text-amber-700 dark:text-amber-300 space-y-1">
+            {/* Callout - Collapsible */}
+            <Collapsible>
+              <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg">
+                <CollapsibleTrigger className="w-full p-4 flex items-center justify-between hover:bg-amber-100/50 dark:hover:bg-amber-900/20 transition-colors rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <AlertTriangle className="h-5 w-5 text-amber-600 shrink-0" />
+                    <p className="font-medium text-amber-800 dark:text-amber-200 text-sm">Catatan Penting</p>
+                  </div>
+                  <ChevronDown className="h-4 w-4 text-amber-600 transition-transform duration-200 [[data-state=open]>&]:rotate-180" />
+                </CollapsibleTrigger>
+                <CollapsibleContent className="px-4 pb-4">
+                  <ul className="list-disc list-inside text-amber-700 dark:text-amber-300 space-y-1 text-sm ml-8">
                     <li>Kategori aksi adalah standar aksi yang dipakai saat membentuk entitlement.</li>
                     <li>Entitlement dibentuk dari kombinasi objek (Fitur/Sub Fitur) dan kategori aksi.</li>
                     <li>Perubahan slug pada kategori aksi atau entitlement yang sudah digunakan dapat mempengaruhi konsistensi aturan akses.</li>
                   </ul>
-                </div>
+                </CollapsibleContent>
               </div>
-            </div>
+            </Collapsible>
 
             {/* Section 1: Kategori Aksi */}
             <Collapsible open={!kategoriAksiCollapsed} onOpenChange={(open) => setKategoriAksiCollapsed(!open)}>
