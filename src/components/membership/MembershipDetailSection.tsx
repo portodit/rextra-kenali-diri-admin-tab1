@@ -199,14 +199,14 @@ export function MembershipDetailSection({
                 {status.name}
               </h2>
               <div className="flex items-center gap-2 mt-0.5">
-                {/* Category Badge - Distinct Styling */}
+                {/* Category Badge */}
                 <span className={cn(
-                  "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold",
+                  "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium",
                   status.category === "paid" 
-                    ? "bg-gradient-to-r from-amber-100 to-yellow-100 text-amber-700 border border-amber-200" 
+                    ? "bg-amber-50 text-amber-700 border border-amber-200" 
                     : "bg-slate-100 text-slate-600 border border-slate-200"
                 )}>
-                  {status.category === "paid" ? "💎 Premium" : "🆓 Free"}
+                  {status.category === "paid" ? "Premium" : "Free"}
                 </span>
                 
                 {/* Status Badge */}
@@ -247,19 +247,18 @@ export function MembershipDetailSection({
             </div>
             
           <div className="space-y-1">
-              <Label className="text-[10px] text-muted-foreground uppercase tracking-widest font-semibold">Kategori</Label>
+              <Label className="text-[10px] text-muted-foreground uppercase tracking-widest font-medium">Kategori</Label>
               <div className={cn(
-                "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold",
+                "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium",
                 status.category === "paid" 
-                  ? "bg-gradient-to-r from-amber-50 to-yellow-50 text-amber-700 border border-amber-200" 
+                  ? "bg-amber-50 text-amber-700 border border-amber-200" 
                   : "bg-slate-50 text-slate-600 border border-slate-200"
               )}>
-                {status.category === "paid" ? "💎 Premium" : "🆓 Free Tier"}
+                {status.category === "paid" ? "Premium" : "Free Tier"}
               </div>
             </div>
-            
             <div className="space-y-1">
-              <Label className="text-[10px] text-muted-foreground uppercase tracking-widest font-semibold">Status</Label>
+              <Label className="text-[10px] text-muted-foreground uppercase tracking-widest font-medium">Status</Label>
               <div className={cn(
                 "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium",
                 status.isActive 
@@ -273,16 +272,14 @@ export function MembershipDetailSection({
                 {status.isActive ? "Aktif" : "Nonaktif"}
               </div>
             </div>
-            
             {status.description && (
               <div className="space-y-1">
-                <Label className="text-[10px] text-muted-foreground uppercase tracking-widest font-semibold">Deskripsi</Label>
+                <Label className="text-[10px] text-muted-foreground uppercase tracking-widest font-medium">Deskripsi</Label>
                 <p className="text-sm text-muted-foreground leading-relaxed">{status.description}</p>
               </div>
             )}
-            
             <div className="space-y-1">
-              <Label className="text-[10px] text-muted-foreground uppercase tracking-widest font-semibold">Terakhir Diubah</Label>
+              <Label className="text-[10px] text-muted-foreground uppercase tracking-widest font-medium">Terakhir Diubah</Label>
               <p className="text-xs text-muted-foreground">
                 {status.lastUpdated} WIB
                 <br />
