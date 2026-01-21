@@ -20,17 +20,14 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { 
-  Search, 
   ChevronDown, 
   ChevronUp,
   AlertTriangle, 
-  ArrowLeft,
-  Settings,
   RefreshCw,
-  Check,
   X,
   Info,
-  Edit2,
+  Crown,
+  Users,
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
@@ -170,13 +167,13 @@ export default function MembershipStatusPage() {
   
   // UI State
   const [isCalloutOpen, setIsCalloutOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [filterCategory, setFilterCategory] = useState<FilterOption>("all");
-  const [sortBy, setSortBy] = useState<SortOption>("name-asc");
   
   // Selection state
   const [selectedStatus, setSelectedStatus] = useState<MembershipStatus | null>(null);
   const [isListCollapsed, setIsListCollapsed] = useState(false);
+
+  // Data state (for simulating changes)
+  const [statuses, setStatuses] = useState<MembershipStatus[]>(demoStatuses);
   
   // Modal state
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -187,43 +184,9 @@ export default function MembershipStatusPage() {
     message: string;
   } | null>(null);
 
-  // Data state (for simulating changes)
-  const [statuses, setStatuses] = useState<MembershipStatus[]>(demoStatuses);
-
-  // Filter and sort
-  const filteredStatuses = useMemo(() => {
-    let result = [...statuses];
-    
-    // Search
-    if (searchQuery) {
-      result = result.filter(s => 
-        s.name.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
-    
-    // Filter
-    if (filterCategory !== "all") {
-      result = result.filter(s => s.category === filterCategory);
-    }
-    
-    // Sort
-    switch (sortBy) {
-      case "name-asc":
-        result.sort((a, b) => a.name.localeCompare(b.name));
-        break;
-      case "name-desc":
-        result.sort((a, b) => b.name.localeCompare(a.name));
-        break;
-      case "updated":
-        result.sort((a, b) => b.lastUpdated.localeCompare(a.lastUpdated));
-        break;
-    }
-    
-    return result;
-  }, [statuses, searchQuery, filterCategory, sortBy]);
-
-  const unpaidStatuses = filteredStatuses.filter(s => s.category === "unpaid");
-  const paidStatuses = filteredStatuses.filter(s => s.category === "paid");
+  // Filtered lists (no search/filter needed - static 5 items)
+  const unpaidStatuses = statuses.filter(s => s.category === "unpaid");
+  const paidStatuses = statuses.filter(s => s.category === "paid");
 
   const handleSelectStatus = (status: MembershipStatus) => {
     setSelectedStatus(status);
@@ -431,106 +394,71 @@ export default function MembershipStatusPage() {
               </div>
               <h3 className="text-lg font-semibold text-foreground mb-1">Belum ada status membership</h3>
               <p className="text-sm text-muted-foreground mb-4">
-                Mulai dengan menambahkan status membership pertama.
-              </p>
-              <Button className="gap-2">
-                <Settings className="h-4 w-4" />
-                Tambah Status
-              </Button>
-            </CardContent>
-          </Card>
-        )}
+              Mulai dengan menambahkan status membership pertama.
+            </p>
+            <Button className="gap-2">
+              <Crown className="h-4 w-4" />
+              Tambah Status
+            </Button>
+          </CardContent>
+        </Card>
+      )}
 
-        {/* Data State */}
-        {demoState === "data" && (
-          <>
-            {/* Section A: List */}
-            {!isListCollapsed ? (
-              <div className="space-y-6">
-                {/* Search, Filter, Sort */}
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <div className="relative flex-1 max-w-xs">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      placeholder="Cari paket..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-9"
-                    />
+      {/* Data State */}
+      {demoState === "data" && (
+        <>
+          {/* Section A: List */}
+          {!isListCollapsed ? (
+            <div className="space-y-8">
+              {/* Unpaid Group */}
+              {unpaidStatuses.length > 0 && (
+                <div>
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="flex items-center justify-center h-8 w-8 rounded-lg bg-slate-100">
+                      <Users className="h-4 w-4 text-slate-600" />
+                    </div>
+                    <div>
+                      <h3 className="text-base font-semibold text-foreground">Free Tier</h3>
+                      <p className="text-xs text-muted-foreground">{unpaidStatuses.length} paket gratis</p>
+                    </div>
                   </div>
-                  <Select value={filterCategory} onValueChange={(v) => setFilterCategory(v as FilterOption)}>
-                    <SelectTrigger className="w-32">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Semua</SelectItem>
-                      <SelectItem value="paid">Paid</SelectItem>
-                      <SelectItem value="unpaid">Unpaid</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <Select value={sortBy} onValueChange={(v) => setSortBy(v as SortOption)}>
-                    <SelectTrigger className="w-44">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="name-asc">Nama A–Z</SelectItem>
-                      <SelectItem value="name-desc">Nama Z–A</SelectItem>
-                      <SelectItem value="updated">Terakhir Diubah</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                    {unpaidStatuses.map((status) => (
+                      <MembershipStatusCard
+                        key={status.id}
+                        status={status}
+                        onSelect={() => handleSelectStatus(status)}
+                        isSelected={selectedStatus?.id === status.id}
+                      />
+                    ))}
+                  </div>
                 </div>
+              )}
 
-                {/* Unpaid Group */}
-                {(filterCategory === "all" || filterCategory === "unpaid") && unpaidStatuses.length > 0 && (
-                  <div>
-                    <h3 className="text-base font-semibold text-foreground mb-3 flex items-center gap-2">
-                      Unpaid Membership
-                      <span className="text-sm font-normal text-muted-foreground">({unpaidStatuses.length})</span>
-                    </h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                      {unpaidStatuses.map((status) => (
-                        <MembershipStatusCard
-                          key={status.id}
-                          status={status}
-                          onSelect={() => handleSelectStatus(status)}
-                          isSelected={selectedStatus?.id === status.id}
-                        />
-                      ))}
+              {/* Paid Group */}
+              {paidStatuses.length > 0 && (
+                <div>
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="flex items-center justify-center h-8 w-8 rounded-lg bg-gradient-to-br from-amber-100 to-yellow-100">
+                      <Crown className="h-4 w-4 text-amber-600" />
+                    </div>
+                    <div>
+                      <h3 className="text-base font-semibold text-foreground">Premium Tier</h3>
+                      <p className="text-xs text-muted-foreground">{paidStatuses.length} paket berbayar</p>
                     </div>
                   </div>
-                )}
-
-                {/* Paid Group */}
-                {(filterCategory === "all" || filterCategory === "paid") && paidStatuses.length > 0 && (
-                  <div>
-                    <h3 className="text-base font-semibold text-foreground mb-3 flex items-center gap-2">
-                      Paid Membership
-                      <span className="text-sm font-normal text-muted-foreground">({paidStatuses.length})</span>
-                    </h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                      {paidStatuses.map((status) => (
-                        <MembershipStatusCard
-                          key={status.id}
-                          status={status}
-                          onSelect={() => handleSelectStatus(status)}
-                          isSelected={selectedStatus?.id === status.id}
-                        />
-                      ))}
-                    </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                    {paidStatuses.map((status) => (
+                      <MembershipStatusCard
+                        key={status.id}
+                        status={status}
+                        onSelect={() => handleSelectStatus(status)}
+                        isSelected={selectedStatus?.id === status.id}
+                      />
+                    ))}
                   </div>
-                )}
-
-                {/* No results */}
-                {filteredStatuses.length === 0 && (
-                  <Card>
-                    <CardContent className="flex flex-col items-center justify-center py-12">
-                      <Search className="h-10 w-10 text-muted-foreground mb-3" />
-                      <p className="text-sm text-muted-foreground">
-                        Tidak ada paket yang cocok dengan pencarian "{searchQuery}"
-                      </p>
-                    </CardContent>
-                  </Card>
-                )}
+                </div>
+              )}
               </div>
             ) : (
               /* Collapsed Section A */

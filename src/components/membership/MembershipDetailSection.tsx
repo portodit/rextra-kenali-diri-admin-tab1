@@ -175,38 +175,56 @@ export function MembershipDetailSection({
   };
 
   return (
-    <div className="space-y-4">
-      {/* Top Bar */}
-      <div className="flex items-center justify-between">
-        <button 
+    <div className="space-y-6">
+      {/* Header with Back Button and Title */}
+      <div className="flex items-center gap-4">
+        <Button 
+          variant="outline" 
+          size="icon"
           onClick={handleCancel}
-          className="flex items-center gap-2 text-sm text-primary hover:underline"
+          className="h-10 w-10 shrink-0 rounded-xl border-2 hover:bg-muted"
         >
           <ArrowLeft className="h-4 w-4" />
-          Kembali ke Daftar
-        </button>
-      </div>
-
-      <div className="mb-4">
-        <h2 className="text-xl font-bold text-foreground">
-          Detail Paket: {status.name}
-        </h2>
-        <div className="flex items-center gap-2 mt-1">
-          <span className="text-sm text-muted-foreground">
-            {status.category === "paid" ? "Paid Membership" : "Unpaid Membership"}
-          </span>
-          <span className="text-muted-foreground">•</span>
-          <Badge 
-            variant="outline"
-            className={cn(
-              "text-xs",
-              status.isActive 
-                ? "bg-success/10 text-success border-success/20" 
-                : "bg-destructive/10 text-destructive border-destructive/20"
-            )}
-          >
-            {status.isActive ? "Aktif" : "Nonaktif"}
-          </Badge>
+        </Button>
+        
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-3">
+            <img 
+              src={status.emblem} 
+              alt={status.name} 
+              className="h-10 w-10 object-contain"
+            />
+            <div>
+              <h2 className="text-xl font-bold text-foreground truncate">
+                {status.name}
+              </h2>
+              <div className="flex items-center gap-2 mt-0.5">
+                {/* Category Badge - Distinct Styling */}
+                <span className={cn(
+                  "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold",
+                  status.category === "paid" 
+                    ? "bg-gradient-to-r from-amber-100 to-yellow-100 text-amber-700 border border-amber-200" 
+                    : "bg-slate-100 text-slate-600 border border-slate-200"
+                )}>
+                  {status.category === "paid" ? "💎 Premium" : "🆓 Free"}
+                </span>
+                
+                {/* Status Badge */}
+                <span className={cn(
+                  "inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium",
+                  status.isActive 
+                    ? "bg-success/10 text-success" 
+                    : "bg-destructive/10 text-destructive"
+                )}>
+                  <span className={cn(
+                    "w-1.5 h-1.5 rounded-full",
+                    status.isActive ? "bg-success" : "bg-destructive"
+                  )} />
+                  {status.isActive ? "Aktif" : "Nonaktif"}
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -228,47 +246,61 @@ export function MembershipDetailSection({
               <p className="text-sm font-medium capitalize">{status.category} Membership</p>
             </div>
             
-            <div>
-              <Label className="text-xs text-muted-foreground uppercase tracking-wide">Status</Label>
-              <div className="mt-1">
-                <Badge 
-                  variant="outline"
-                  className={cn(
-                    status.isActive 
-                      ? "bg-success/10 text-success border-success/20" 
-                      : "bg-destructive/10 text-destructive border-destructive/20"
-                  )}
-                >
-                  {status.isActive ? "Aktif" : "Nonaktif"}
-                </Badge>
+          <div className="space-y-1">
+              <Label className="text-[10px] text-muted-foreground uppercase tracking-widest font-semibold">Kategori</Label>
+              <div className={cn(
+                "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold",
+                status.category === "paid" 
+                  ? "bg-gradient-to-r from-amber-50 to-yellow-50 text-amber-700 border border-amber-200" 
+                  : "bg-slate-50 text-slate-600 border border-slate-200"
+              )}>
+                {status.category === "paid" ? "💎 Premium" : "🆓 Free Tier"}
+              </div>
+            </div>
+            
+            <div className="space-y-1">
+              <Label className="text-[10px] text-muted-foreground uppercase tracking-widest font-semibold">Status</Label>
+              <div className={cn(
+                "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium",
+                status.isActive 
+                  ? "bg-success/10 text-success border border-success/20" 
+                  : "bg-destructive/10 text-destructive border border-destructive/20"
+              )}>
+                <span className={cn(
+                  "w-2 h-2 rounded-full",
+                  status.isActive ? "bg-success animate-pulse" : "bg-destructive"
+                )} />
+                {status.isActive ? "Aktif" : "Nonaktif"}
               </div>
             </div>
             
             {status.description && (
-              <div>
-                <Label className="text-xs text-muted-foreground uppercase tracking-wide">Deskripsi</Label>
-                <p className="text-sm text-muted-foreground mt-1 leading-relaxed">{status.description}</p>
+              <div className="space-y-1">
+                <Label className="text-[10px] text-muted-foreground uppercase tracking-widest font-semibold">Deskripsi</Label>
+                <p className="text-sm text-muted-foreground leading-relaxed">{status.description}</p>
               </div>
             )}
             
-            <div>
-              <Label className="text-xs text-muted-foreground uppercase tracking-wide">Terakhir Diubah</Label>
-              <p className="text-xs text-muted-foreground mt-1">
+            <div className="space-y-1">
+              <Label className="text-[10px] text-muted-foreground uppercase tracking-widest font-semibold">Terakhir Diubah</Label>
+              <p className="text-xs text-muted-foreground">
                 {status.lastUpdated} WIB
                 <br />
-                oleh {status.lastUpdatedBy}
+                <span className="text-foreground/70">oleh {status.lastUpdatedBy}</span>
               </p>
             </div>
             
-            <Button 
-              variant="outline" 
-              className="w-full gap-2" 
-              size="sm"
-              onClick={onEditMetadata}
-            >
-              <Edit2 className="h-3.5 w-3.5" />
-              Edit Metadata
-            </Button>
+            <div className="pt-2">
+              <Button 
+                variant="outline" 
+                className="w-full gap-2 border-dashed" 
+                size="sm"
+                onClick={onEditMetadata}
+              >
+                <Edit2 className="h-3.5 w-3.5" />
+                Edit Metadata
+              </Button>
+            </div>
           </CardContent>
         </Card>
 
