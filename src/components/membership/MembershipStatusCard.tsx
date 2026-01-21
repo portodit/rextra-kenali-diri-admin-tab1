@@ -111,9 +111,8 @@ export function MembershipStatusCard({ status, onSelect, isSelected }: Membershi
       )}
       onClick={onSelect}
     >
-      {/* Category Tag - Top Right Corner */}
       <div className={cn(
-        "absolute -top-2 right-4 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-white shadow-md",
+        "absolute -top-2 right-4 px-3 py-1 rounded-full text-[10px] font-medium uppercase tracking-wide text-white shadow-sm",
         tierStyle.tagBg
       )}>
         {status.category === "paid" ? "Premium" : "Free"}
@@ -151,17 +150,17 @@ export function MembershipStatusCard({ status, onSelect, isSelected }: Membershi
         {/* Title & Icon */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <h4 className="text-xl font-bold text-foreground tracking-tight truncate">
+            <h4 className="text-lg font-semibold text-foreground tracking-tight truncate">
               {status.name}
             </h4>
             {TierIcon && (
-              <TierIcon className={cn("h-5 w-5 shrink-0", tierStyle.accent)} />
+              <TierIcon className={cn("h-4 w-4 shrink-0", tierStyle.accent)} />
             )}
           </div>
           
           {/* Price Display */}
           <div className="mt-1">
-            <span className={cn("text-2xl font-extrabold", tierStyle.accent)}>
+            <span className={cn("text-xl font-bold", tierStyle.accent)}>
               {formatPrice(status.price)}
             </span>
             {status.price !== null && status.price > 0 && (
