@@ -574,14 +574,11 @@ export function AccessMappingTab({ packageId, packageName }: AccessMappingTabPro
                       />
                     </TableHead>
                     <TableHead className="font-semibold min-w-[200px]">Nama Hak Akses</TableHead>
-                    <TableHead className="font-semibold min-w-[180px]">Key</TableHead>
-                    <TableHead className="font-semibold min-w-[140px]">Objek</TableHead>
+                    <TableHead className="font-semibold min-w-[120px]">Objek</TableHead>
                     <TableHead className="font-semibold">Kategori</TableHead>
                     <TableHead className="font-semibold">Pembatasan</TableHead>
-                    <TableHead className="font-semibold min-w-[120px]">Parameter</TableHead>
                     <TableHead className="font-semibold">Status</TableHead>
-                    <TableHead className="font-semibold min-w-[140px]">Terakhir Diubah</TableHead>
-                    <TableHead className="font-semibold w-20">Aksi</TableHead>
+                    <TableHead className="font-semibold w-20 text-center">Aksi</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -596,32 +593,12 @@ export function AccessMappingTab({ packageId, packageName }: AccessMappingTabPro
                       </TableCell>
                       <TableCell className="font-medium">{mapping.entitlementName}</TableCell>
                       <TableCell>
-                        <div className="flex items-center gap-1.5">
-                          <code className="text-xs font-mono text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
-                            {mapping.entitlementKey}
-                          </code>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <button 
-                                onClick={() => handleCopyKey(mapping.entitlementKey)}
-                                className="p-1 hover:bg-muted rounded"
-                              >
-                                <Copy className="h-3.5 w-3.5 text-muted-foreground" />
-                              </button>
-                            </TooltipTrigger>
-                            <TooltipContent>Salin key</TooltipContent>
-                          </Tooltip>
-                        </div>
-                      </TableCell>
-                      <TableCell>
                         <span className="text-sm">
-                          {mapping.objectType === "feature" ? "Fitur: " : "Sub Fitur: "}
-                          {mapping.objectName}
+                          {mapping.objectType === "feature" ? "Fitur" : "Sub Fitur"}
                         </span>
                       </TableCell>
                       <TableCell className="capitalize">{mapping.category}</TableCell>
                       <TableCell>{getRestrictionBadge(mapping)}</TableCell>
-                      <TableCell>{getParameter(mapping)}</TableCell>
                       <TableCell>
                         <Badge 
                           variant="outline"
@@ -635,10 +612,7 @@ export function AccessMappingTab({ packageId, packageName }: AccessMappingTabPro
                           {mapping.isActive ? "Aktif" : "Nonaktif"}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-sm text-muted-foreground">
-                        {mapping.lastUpdated}
-                      </TableCell>
-                      <TableCell>
+                      <TableCell className="text-center">
                         <Button 
                           variant="ghost" 
                           size="sm" 
