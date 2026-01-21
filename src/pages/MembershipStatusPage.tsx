@@ -460,24 +460,7 @@ export default function MembershipStatusPage() {
                 </div>
               )}
               </div>
-            ) : (
-              /* Collapsed Section A */
-              <div className="flex items-center justify-between px-4 py-3 bg-muted/50 border rounded-lg">
-                <div className="flex items-center gap-3">
-                  <img 
-                    src={selectedStatus?.emblem} 
-                    alt={selectedStatus?.name} 
-                    className="h-8 w-8 object-contain"
-                  />
-                  <span className="text-sm font-medium">
-                    Paket terpilih: <span className="font-semibold">{selectedStatus?.name}</span>
-                  </span>
-                </div>
-                <Button variant="outline" size="sm" onClick={handleExpandList}>
-                  Ganti Paket
-                </Button>
-              </div>
-            )}
+            ) : null}
 
             {/* Section B: Detail */}
             {selectedStatus && isListCollapsed && (
@@ -486,6 +469,7 @@ export default function MembershipStatusPage() {
                 onBack={handleBackToList}
                 onEditMetadata={handleEditMetadata}
                 onSaveConfig={handleSaveConfig}
+                onChangePackage={handleExpandList}
               />
             )}
           </>

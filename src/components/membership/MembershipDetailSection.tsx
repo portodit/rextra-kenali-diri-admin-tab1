@@ -25,6 +25,7 @@ interface MembershipDetailSectionProps {
   onBack: () => void;
   onEditMetadata: () => void;
   onSaveConfig: (config: MembershipStatus['config']) => void;
+  onChangePackage?: () => void;
 }
 
 export function MembershipDetailSection({
@@ -32,6 +33,7 @@ export function MembershipDetailSection({
   onBack,
   onEditMetadata,
   onSaveConfig,
+  onChangePackage,
 }: MembershipDetailSectionProps) {
   const [activeTab, setActiveTab] = useState("akses");
   const [config, setConfig] = useState(status.config);
@@ -236,16 +238,29 @@ export function MembershipDetailSection({
               </div>
             </div>
             
-            {/* Edit Button */}
-            <Button 
-              variant="outline" 
-              className="gap-2 shrink-0" 
-              size="sm"
-              onClick={onEditMetadata}
-            >
-              <Edit2 className="h-3.5 w-3.5" />
-              Edit Metadata
-            </Button>
+            {/* Action Buttons */}
+            <div className="flex items-center gap-2 shrink-0">
+              <Button 
+                variant="outline" 
+                className="gap-2" 
+                size="sm"
+                onClick={onEditMetadata}
+              >
+                <Edit2 className="h-3.5 w-3.5" />
+                Edit Metadata
+              </Button>
+              {onChangePackage && (
+                <Button 
+                  variant="default" 
+                  className="gap-2" 
+                  size="sm"
+                  onClick={onChangePackage}
+                >
+                  <RefreshCw className="h-3.5 w-3.5" />
+                  Ganti Paket
+                </Button>
+              )}
+            </div>
           </div>
         </CardContent>
       </Card>
