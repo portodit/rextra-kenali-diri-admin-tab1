@@ -111,7 +111,7 @@ export function MembershipStatusCard({ status, onSelect, isSelected }: Membershi
       )}
       onClick={onSelect}
     >
-      <div className="absolute -top-2 right-4 px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wide bg-slate-800 text-white shadow-sm">
+      <div className="absolute -top-2 right-4 px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wide bg-white text-slate-600 border border-slate-200 shadow-sm">
         {status.id === "starter" ? "TRIAL CLUB" : status.category === "paid" ? "REXTRA CLUB" : "NON CLUB"}
       </div>
 
@@ -232,7 +232,7 @@ export function MembershipStatusCard({ status, onSelect, isSelected }: Membershi
         size="sm" 
         className={cn(
           "w-full mt-4 gap-2 font-semibold transition-all",
-          "bg-foreground/90 hover:bg-foreground text-background",
+          "bg-primary hover:bg-primary/90 text-primary-foreground",
           "group-hover:shadow-lg"
         )}
         onClick={(e) => {
