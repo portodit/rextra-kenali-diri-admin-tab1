@@ -603,12 +603,9 @@ export default function SistemTokenLedger() {
                       <TableHead className="min-w-[140px]">Waktu</TableHead>
                       <TableHead className="min-w-[160px]">User</TableHead>
                       <TableHead className="min-w-[100px]">Sumber</TableHead>
-                      <TableHead className="w-[60px] text-center">↕</TableHead>
                       <TableHead className="min-w-[100px] text-right">±Token</TableHead>
                       <TableHead className="min-w-[80px] text-right">Sebelum</TableHead>
                       <TableHead className="min-w-[80px] text-right">Sesudah</TableHead>
-                      <TableHead className="min-w-[140px]">Referensi</TableHead>
-                      <TableHead className="min-w-[180px]">Keterangan</TableHead>
                       <TableHead className="w-[80px] text-center">Aksi</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -616,9 +613,13 @@ export default function SistemTokenLedger() {
                     {paginatedData.map((entry) => {
                       const sourceBadge = getSourceBadge(entry.source);
                       return (
-                        <TableRow key={entry.id} className="group">
+                        <TableRow 
+                          key={entry.id} 
+                          className="group cursor-pointer hover:bg-sky-50/50"
+                          onClick={() => handleOpenDetail(entry)}
+                        >
                           <TableCell className="font-mono text-xs">
-                            {format(entry.timestamp, "dd/MM/yy HH:mm:ss")}
+                            {format(entry.timestamp, "dd/MM/yy HH:mm")}
                           </TableCell>
                           <TableCell>
                             <div>
@@ -631,15 +632,17 @@ export default function SistemTokenLedger() {
                               {sourceBadge.label}
                             </Badge>
                           </TableCell>
-                          <TableCell className="text-center">
-                            {entry.movement === "in" ? (
-                              <ArrowUpCircle className="h-5 w-5 text-emerald-500 mx-auto" />
-                            ) : (
-                              <ArrowDownCircle className="h-5 w-5 text-destructive mx-auto" />
-                            )}
-                          </TableCell>
-                          <TableCell className={cn("text-right font-semibold tabular-nums", entry.movement === "in" ? "text-emerald-600" : "text-destructive")}>
-                            {entry.movement === "in" ? "+" : ""}{entry.tokenChange}
+                          <TableCell className="text-right">
+                            <div className="flex items-center justify-end gap-1.5">
+                              {entry.movement === "in" ? (
+                                <ArrowUpCircle className="h-4 w-4 text-emerald-500" />
+                              ) : (
+                                <ArrowDownCircle className="h-4 w-4 text-destructive" />
+                              )}
+                              <span className={cn("font-semibold tabular-nums", entry.movement === "in" ? "text-emerald-600" : "text-destructive")}>
+                                {entry.movement === "in" ? "+" : ""}{entry.tokenChange}
+                              </span>
+                            </div>
                           </TableCell>
                           <TableCell className="text-right text-muted-foreground tabular-nums">
                             {entry.balanceBefore}
@@ -647,31 +650,14 @@ export default function SistemTokenLedger() {
                           <TableCell className="text-right font-semibold tabular-nums">
                             {entry.balanceAfter}
                           </TableCell>
-                          <TableCell>
-                            <div className="flex items-center gap-1.5">
-                              <code className="text-xs bg-muted px-1.5 py-0.5 rounded font-mono truncate max-w-[100px]">
-                                {entry.referenceId}
-                              </code>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
-                                onClick={() => handleCopy(entry.referenceId)}
-                              >
-                                <Copy className="h-3 w-3" />
-                              </Button>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <p className="text-sm truncate max-w-[180px]" title={entry.description}>
-                              {entry.description}
-                            </p>
-                          </TableCell>
                           <TableCell className="text-center">
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => handleOpenDetail(entry)}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleOpenDetail(entry);
+                              }}
                               className="text-primary hover:text-primary"
                             >
                               Detail
