@@ -131,8 +131,8 @@ export function TransactionTable({ transactions, onViewDetail }: TransactionTabl
         <Table>
           <TableHeader>
             <TableRow className="bg-muted/30 hover:bg-muted/30">
-              <TableHead className="min-w-[130px] font-semibold text-foreground">Transaksi ID</TableHead>
               <TableHead className="min-w-[100px] font-semibold text-foreground">Waktu</TableHead>
+              <TableHead className="min-w-[130px] font-semibold text-foreground">Transaksi ID</TableHead>
               <TableHead className="min-w-[120px] font-semibold text-foreground">Pengguna</TableHead>
               <TableHead className="min-w-[140px] font-semibold text-foreground">Jenis Transaksi</TableHead>
               <TableHead className="min-w-[140px] font-semibold text-foreground">Detail Status</TableHead>
@@ -149,7 +149,19 @@ export function TransactionTable({ transactions, onViewDetail }: TransactionTabl
                 className="cursor-pointer hover:bg-sky-50/50 transition-colors"
                 onClick={() => onViewDetail(trx)}
               >
-                {/* Transaksi ID */}
+                {/* Waktu - now first */}
+                <TableCell>
+                  <div className="space-y-0.5">
+                    <p className="text-sm font-medium">
+                      {format(trx.date, "dd MMM yy", { locale: id })}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {format(trx.date, "HH:mm", { locale: id })}
+                    </p>
+                  </div>
+                </TableCell>
+
+                {/* Transaksi ID - now second */}
                 <TableCell>
                   <div className="flex items-center gap-1.5">
                     <code className="text-xs font-mono text-muted-foreground bg-muted/50 px-1.5 py-0.5 rounded">
@@ -163,18 +175,6 @@ export function TransactionTable({ transactions, onViewDetail }: TransactionTabl
                     >
                       <Copy className="h-3 w-3" />
                     </Button>
-                  </div>
-                </TableCell>
-
-                {/* Waktu */}
-                <TableCell>
-                  <div className="space-y-0.5">
-                    <p className="text-sm font-medium">
-                      {format(trx.date, "dd MMM yy", { locale: id })}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {format(trx.date, "HH:mm", { locale: id })}
-                    </p>
                   </div>
                 </TableCell>
 
