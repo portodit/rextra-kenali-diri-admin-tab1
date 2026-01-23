@@ -1,7 +1,7 @@
 export type MembershipCategory = "REXTRA Club" | "Trial Club" | "Non-Club";
 export type MembershipTier = "Starter" | "Standard" | "Basic" | "Pro" | "Max";
 export type EventType = "Purchase" | "Renewal" | "Upgrade" | "Downgrade" | "Trial Start" | "Trial End" | "Expired" | "Refund" | "Join";
-export type PaymentStatus = "Menunggu" | "Berhasil" | "Gagal" | "Expired" | "Refund";
+export type PaymentStatus = "Menunggu" | "Berhasil" | "Gagal" | "Dibatalkan" | "Expired" | "Refund";
 export type ValidityStatus = "Aktif" | "Expiring" | "Expired";
 
 export interface MemberUser {

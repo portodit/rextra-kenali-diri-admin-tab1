@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { Search, Filter, Download, RefreshCw, AlertCircle, Calendar } from "lucide-react";
+import { Search, Download, RefreshCw, AlertCircle, Calendar, X, Filter } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -33,7 +33,6 @@ export function TransactionHistoryTab({ demoState }: TransactionHistoryTabProps)
   const [paymentStatusFilter, setPaymentStatusFilter] = useState("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [durationFilter, setDurationFilter] = useState("all");
-  const [promoFilter, setPromoFilter] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [currentPage, setCurrentPage] = useState(1);
@@ -79,13 +78,6 @@ export function TransactionHistoryTab({ demoState }: TransactionHistoryTabProps)
       filtered = filtered.filter((t) => t.duration.includes(durationFilter));
     }
 
-    // Promo filter
-    if (promoFilter === "with") {
-      filtered = filtered.filter((t) => t.promoCode);
-    } else if (promoFilter === "without") {
-      filtered = filtered.filter((t) => !t.promoCode);
-    }
-
     // Date range filter
     if (dateRange?.from) {
       filtered = filtered.filter((t) => t.date >= dateRange.from!);
@@ -111,7 +103,7 @@ export function TransactionHistoryTab({ demoState }: TransactionHistoryTabProps)
     }
 
     return filtered;
-  }, [mockTransactions, search, eventTypeFilter, paymentStatusFilter, categoryFilter, durationFilter, promoFilter, dateRange, sortBy, demoState]);
+  }, [mockTransactions, search, eventTypeFilter, paymentStatusFilter, categoryFilter, durationFilter, dateRange, sortBy, demoState]);
 
   const paginatedTransactions = useMemo(() => {
     const start = (currentPage - 1) * itemsPerPage;
@@ -120,7 +112,7 @@ export function TransactionHistoryTab({ demoState }: TransactionHistoryTabProps)
 
   const totalPages = Math.ceil(filteredTransactions.length / itemsPerPage);
 
-  const hasActiveFilters = search || eventTypeFilter !== "all" || paymentStatusFilter !== "all" || categoryFilter !== "all" || durationFilter !== "all" || promoFilter !== "all" || dateRange;
+  const hasActiveFilters = search || eventTypeFilter !== "all" || paymentStatusFilter !== "all" || categoryFilter !== "all" || durationFilter !== "all" || dateRange;
 
   const resetFilters = () => {
     setSearch("");
@@ -128,7 +120,6 @@ export function TransactionHistoryTab({ demoState }: TransactionHistoryTabProps)
     setPaymentStatusFilter("all");
     setCategoryFilter("all");
     setDurationFilter("all");
-    setPromoFilter("all");
     setSortBy("newest");
     setDateRange(undefined);
     setCurrentPage(1);
@@ -236,33 +227,21 @@ export function TransactionHistoryTab({ demoState }: TransactionHistoryTabProps)
         </p>
       </div>
 
-      {/* Control Bar */}
-      <div className="space-y-3">
-        {/* Search */}
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Cari user, invoice, atau reference ID..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="pl-9"
-          />
-        </div>
-
-        {/* Filters Row 1 */}
-        <div className="flex flex-wrap gap-2">
+      {/* Control Bar - Horizontal Dropdowns */}
+      <div className="flex flex-col gap-4">
+        {/* First row: Filters */}
+        <div className="flex flex-wrap items-center gap-2">
           <Select value={eventTypeFilter} onValueChange={setEventTypeFilter}>
-            <SelectTrigger className="w-[130px]">
-              <SelectValue placeholder="Event Type" />
+            <SelectTrigger className="w-[140px]">
+              <SelectValue placeholder="Jenis" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Semua Event</SelectItem>
+              <SelectItem value="all">Semua Jenis</SelectItem>
               <SelectItem value="Purchase">Purchase</SelectItem>
               <SelectItem value="Renewal">Renewal</SelectItem>
               <SelectItem value="Upgrade">Upgrade</SelectItem>
               <SelectItem value="Downgrade">Downgrade</SelectItem>
               <SelectItem value="Trial Start">Trial Start</SelectItem>
-              <SelectItem value="Trial End">Trial End</SelectItem>
               <SelectItem value="Expired">Expired</SelectItem>
               <SelectItem value="Refund">Refund</SelectItem>
             </SelectContent>
@@ -274,16 +253,17 @@ export function TransactionHistoryTab({ demoState }: TransactionHistoryTabProps)
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Semua Status</SelectItem>
-              <SelectItem value="Menunggu">Menunggu</SelectItem>
               <SelectItem value="Berhasil">Berhasil</SelectItem>
+              <SelectItem value="Menunggu">Menunggu</SelectItem>
               <SelectItem value="Gagal">Gagal</SelectItem>
+              <SelectItem value="Dibatalkan">Dibatalkan</SelectItem>
               <SelectItem value="Expired">Expired</SelectItem>
               <SelectItem value="Refund">Refund</SelectItem>
             </SelectContent>
           </Select>
 
           <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-            <SelectTrigger className="w-[140px]">
+            <SelectTrigger className="w-[150px]">
               <SelectValue placeholder="Kategori" />
             </SelectTrigger>
             <SelectContent>
@@ -295,11 +275,11 @@ export function TransactionHistoryTab({ demoState }: TransactionHistoryTabProps)
           </Select>
 
           <Select value={durationFilter} onValueChange={setDurationFilter}>
-            <SelectTrigger className="w-[120px]">
+            <SelectTrigger className="w-[130px]">
               <SelectValue placeholder="Durasi" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Semua</SelectItem>
+              <SelectItem value="all">Semua Durasi</SelectItem>
               <SelectItem value="1 bulan">1 bulan</SelectItem>
               <SelectItem value="3 bulan">3 bulan</SelectItem>
               <SelectItem value="6 bulan">6 bulan</SelectItem>
@@ -308,14 +288,15 @@ export function TransactionHistoryTab({ demoState }: TransactionHistoryTabProps)
             </SelectContent>
           </Select>
 
-          <Select value={promoFilter} onValueChange={setPromoFilter}>
-            <SelectTrigger className="w-[130px]">
-              <SelectValue placeholder="Promo Code" />
+          <Select value={sortBy} onValueChange={setSortBy}>
+            <SelectTrigger className="w-[150px]">
+              <SelectValue placeholder="Urutkan" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Semua</SelectItem>
-              <SelectItem value="with">Ada Promo</SelectItem>
-              <SelectItem value="without">Tanpa Promo</SelectItem>
+              <SelectItem value="newest">Terbaru</SelectItem>
+              <SelectItem value="oldest">Terlama</SelectItem>
+              <SelectItem value="highest">Total Tertinggi</SelectItem>
+              <SelectItem value="lowest">Total Terendah</SelectItem>
             </SelectContent>
           </Select>
 
@@ -348,28 +329,25 @@ export function TransactionHistoryTab({ demoState }: TransactionHistoryTabProps)
               />
             </PopoverContent>
           </Popover>
+
+          {hasActiveFilters && (
+            <Button variant="ghost" size="sm" onClick={resetFilters} className="text-muted-foreground">
+              <X className="h-4 w-4 mr-1" />
+              Reset
+            </Button>
+          )}
         </div>
 
-        {/* Sort & Actions */}
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="w-[150px]">
-                <SelectValue placeholder="Urutkan" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="newest">Terbaru</SelectItem>
-                <SelectItem value="oldest">Terlama</SelectItem>
-                <SelectItem value="highest">Total tertinggi</SelectItem>
-                <SelectItem value="lowest">Total terendah</SelectItem>
-              </SelectContent>
-            </Select>
-
-            {hasActiveFilters && (
-              <Button variant="ghost" size="sm" onClick={resetFilters} className="text-muted-foreground">
-                Reset Filter
-              </Button>
-            )}
+        {/* Second row: Search + Export */}
+        <div className="flex items-center gap-3">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Cari user, invoice, atau reference ID..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-9"
+            />
           </div>
 
           <Button variant="outline" size="sm" onClick={handleExport}>
