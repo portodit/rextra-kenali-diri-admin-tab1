@@ -1,11 +1,10 @@
 import { MemberUser, JourneyEvent } from "./types";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
-  RefreshCw, Coins, Gift, Lock, ExternalLink, Calendar, Clock,
+  RefreshCw, Coins, Gift, Lock, Calendar,
   ArrowRight, ShoppingCart, TrendingUp, TrendingDown, Play, XCircle, RotateCcw
 } from "lucide-react";
 import { generateMockJourneyEvents } from "./mockData";
@@ -105,285 +104,185 @@ export function UserDetailDrawer({ user, open, onClose }: UserDetailDrawerProps)
           <SheetTitle className="text-left text-lg">Detail Status Membership</SheetTitle>
         </SheetHeader>
 
-        <ScrollArea className="flex-1">
-          <div className="p-4 md:p-6 space-y-6">
-            {/* STATUS MEMBERSHIP TERKINI */}
-            <section className="relative border border-border/60 rounded-xl p-4 space-y-4">
-              {getCategoryBadge()}
-              
-              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                STATUS MEMBERSHIP TERKINI
-              </h3>
-              
-              {/* Tier Display with Emblem */}
-              <div className={`flex items-center gap-4 p-3 rounded-xl ${tierColor.bg} ${tierColor.border} border`}>
-                <img 
-                  src={tierEmblem} 
-                  alt={user.tier} 
-                  className="h-14 w-14 object-contain drop-shadow-md"
-                />
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
-                    <span className={`text-xl font-bold ${tierColor.text}`}>{user.tier}</span>
-                    <Badge className={`${tierColor.bg} ${tierColor.text} ${tierColor.border} border text-[10px] font-medium`}>
-                      Plan
-                    </Badge>
-                  </div>
-                  {user.autoRenew && (
-                    <div className="flex items-center gap-1 mt-1 text-primary">
-                      <RefreshCw className="h-3 w-3" />
-                      <span className="text-xs font-medium">Auto-renew Aktif</span>
-                    </div>
-                  )}
-                </div>
-              </div>
+        <Tabs defaultValue="current" className="flex-1 flex flex-col overflow-hidden">
+          <TabsList className="bg-transparent border-b border-border rounded-none p-0 h-auto w-full justify-start shrink-0 px-4 md:px-6">
+            <TabsTrigger
+              value="current"
+              className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none px-4 py-3 text-sm font-medium"
+            >
+              Membership Terkini
+            </TabsTrigger>
+            <TabsTrigger
+              value="history"
+              className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none px-4 py-3 text-sm font-medium"
+            >
+              Riwayat Membership
+            </TabsTrigger>
+          </TabsList>
 
-              {/* User Info Grid */}
-              <div className="grid grid-cols-2 gap-3 text-sm">
-                <div>
-                  <p className="text-xs text-muted-foreground">Nama</p>
-                  <p className="font-medium">{user.name}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">Email</p>
-                  <p className="font-medium truncate">{user.email}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">User ID</p>
-                  <p className="font-medium font-mono text-xs">{user.userId}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">Tanggal Mulai</p>
-                  <p className="font-medium">{user.startDate.toLocaleDateString("id-ID")}</p>
-                </div>
-                {user.endDate && (
-                  <>
-                    <div>
-                      <p className="text-xs text-muted-foreground">Tanggal Berakhir</p>
-                      <p className="font-medium">{user.endDate.toLocaleDateString("id-ID")}</p>
+          <ScrollArea className="flex-1">
+            {/* TAB 1: Membership Terkini */}
+            <TabsContent value="current" className="mt-0 p-4 md:p-6 space-y-5">
+              {/* STATUS MEMBERSHIP TERKINI */}
+              <section className="relative border border-border/60 rounded-xl p-4 space-y-4">
+                {getCategoryBadge()}
+                
+                <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  STATUS MEMBERSHIP TERKINI
+                </h3>
+                
+                {/* Tier Display with Emblem */}
+                <div className={`flex items-center gap-4 p-3 rounded-xl ${tierColor.bg} ${tierColor.border} border`}>
+                  <img 
+                    src={tierEmblem} 
+                    alt={user.tier} 
+                    className="h-12 w-12 object-contain drop-shadow-md"
+                  />
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <span className={`text-lg font-bold ${tierColor.text}`}>{user.tier}</span>
+                      {user.autoRenew && (
+                        <div className="flex items-center gap-1 text-primary">
+                          <RefreshCw className="h-3 w-3" />
+                          <span className="text-[10px] font-medium">Auto-renew</span>
+                        </div>
+                      )}
                     </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground">Sisa Durasi</p>
-                      <p className={`font-semibold ${
+                    <p className="text-xs text-muted-foreground mt-0.5">{user.name} • {user.email}</p>
+                  </div>
+                </div>
+
+                {/* Quick Info */}
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                  <div className="p-2 bg-muted/30 rounded-lg">
+                    <p className="text-[10px] text-muted-foreground uppercase">Mulai</p>
+                    <p className="font-medium text-xs">{user.startDate.toLocaleDateString("id-ID")}</p>
+                  </div>
+                  {user.endDate && (
+                    <div className={`p-2 rounded-lg ${
+                      user.validityStatus === "Expired" ? "bg-red-50" :
+                      user.validityStatus === "Expiring" ? "bg-amber-50" :
+                      "bg-muted/30"
+                    }`}>
+                      <p className="text-[10px] text-muted-foreground uppercase">
+                        {user.validityStatus === "Expired" ? "Expired" : "Berakhir"}
+                      </p>
+                      <p className={`font-medium text-xs ${
                         user.validityStatus === "Expired" ? "text-red-600" :
                         user.validityStatus === "Expiring" ? "text-amber-600" :
                         "text-foreground"
                       }`}>
-                        {user.validityStatus === "Expired" 
-                          ? `Expired ${Math.abs(user.remainingDays)} hari lalu`
-                          : `${user.remainingDays} hari`}
+                        {user.endDate.toLocaleDateString("id-ID")} 
+                        {user.validityStatus !== "Expired" && ` (${user.remainingDays}d)`}
                       </p>
                     </div>
-                  </>
-                )}
-              </div>
-            </section>
+                  )}
+                </div>
+              </section>
 
-            {/* BENEFIT STATUS MEMBERSHIP */}
-            <section className="border border-border/60 rounded-xl p-4 space-y-4">
-              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                BENEFIT STATUS MEMBERSHIP
-              </h3>
+              {/* BENEFIT STATUS MEMBERSHIP - Compact */}
+              <section className="border border-border/60 rounded-xl p-4 space-y-3">
+                <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  BENEFIT STATUS MEMBERSHIP
+                </h3>
 
-              <div className="space-y-3">
-                <div className="flex items-center justify-between p-3 bg-amber-50/50 rounded-lg border border-amber-100">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-amber-100 rounded-lg">
-                      <Coins className="h-4 w-4 text-amber-600" />
-                    </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground">Saldo Token</p>
-                      <p className="font-semibold">{user.tokenBalance.toLocaleString("id-ID")} token</p>
-                    </div>
+                <div className="grid grid-cols-3 gap-2">
+                  <div className="flex flex-col items-center p-3 bg-amber-50/50 rounded-lg border border-amber-100">
+                    <Coins className="h-4 w-4 text-amber-600 mb-1" />
+                    <p className="font-bold text-sm">{user.tokenBalance.toLocaleString("id-ID")}</p>
+                    <p className="text-[9px] text-muted-foreground">Token</p>
                   </div>
-                  <Button variant="ghost" size="sm" className="h-8 text-xs text-primary hover:text-primary">
-                    <ExternalLink className="h-3 w-3 mr-1" />
-                    Riwayat
-                  </Button>
-                </div>
-
-                <div className="flex items-center justify-between p-3 bg-violet-50/50 rounded-lg border border-violet-100">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-violet-100 rounded-lg">
-                      <Gift className="h-4 w-4 text-violet-600" />
-                    </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground">Total Poin</p>
-                      <p className="font-semibold">{user.pointsBalance.toLocaleString("id-ID")} poin</p>
-                    </div>
+                  <div className="flex flex-col items-center p-3 bg-violet-50/50 rounded-lg border border-violet-100">
+                    <Gift className="h-4 w-4 text-violet-600 mb-1" />
+                    <p className="font-bold text-sm">{user.pointsBalance.toLocaleString("id-ID")}</p>
+                    <p className="text-[9px] text-muted-foreground">Poin</p>
                   </div>
-                  <Button variant="ghost" size="sm" className="h-8 text-xs text-primary hover:text-primary">
-                    <ExternalLink className="h-3 w-3 mr-1" />
-                    Riwayat
-                  </Button>
-                </div>
-
-                <div className="flex items-center justify-between p-3 bg-sky-50/50 rounded-lg border border-sky-100">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-sky-100 rounded-lg">
-                      <Lock className="h-4 w-4 text-sky-600" />
-                    </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground">Akses Fitur</p>
-                      <p className="font-semibold">{user.entitlementCount} entitlement aktif</p>
-                    </div>
+                  <div className="flex flex-col items-center p-3 bg-sky-50/50 rounded-lg border border-sky-100">
+                    <Lock className="h-4 w-4 text-sky-600 mb-1" />
+                    <p className="font-bold text-sm">{user.entitlementCount}</p>
+                    <p className="text-[9px] text-muted-foreground">Akses</p>
                   </div>
-                  <Button variant="ghost" size="sm" className="h-8 text-xs text-primary hover:text-primary">
-                    <ExternalLink className="h-3 w-3 mr-1" />
-                    Detail
-                  </Button>
                 </div>
-              </div>
-            </section>
+              </section>
 
-            {/* Summary Stats */}
-            <section className="border border-border/60 rounded-xl p-4 space-y-4">
-              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                RINGKASAN MEMBERSHIP
-              </h3>
-              
-              <div className="grid grid-cols-3 gap-3">
-                <div className="text-center p-3 bg-muted/30 rounded-lg">
-                  <p className="text-lg font-bold text-foreground">{summaryStats.transactionCount}</p>
-                  <p className="text-[10px] text-muted-foreground uppercase">Total Transaksi</p>
+              {/* RINGKASAN - Compact */}
+              <section className="border border-border/60 rounded-xl p-4">
+                <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+                  RINGKASAN MEMBERSHIP
+                </h3>
+                
+                <div className="grid grid-cols-3 gap-2 text-center">
+                  <div className="p-2 bg-muted/30 rounded-lg">
+                    <p className="font-bold text-lg">{summaryStats.transactionCount}</p>
+                    <p className="text-[9px] text-muted-foreground uppercase">Transaksi</p>
+                  </div>
+                  <div className="p-2 bg-muted/30 rounded-lg">
+                    <p className="font-bold text-lg">{summaryStats.totalDuration}</p>
+                    <p className="text-[9px] text-muted-foreground uppercase">Total Bulan</p>
+                  </div>
+                  <div className="p-2 bg-muted/30 rounded-lg">
+                    <p className="font-bold text-xs">{formatCurrency(summaryStats.totalPurchase)}</p>
+                    <p className="text-[9px] text-muted-foreground uppercase">Total Bayar</p>
+                  </div>
                 </div>
-                <div className="text-center p-3 bg-muted/30 rounded-lg">
-                  <p className="text-lg font-bold text-foreground">{summaryStats.totalDuration}</p>
-                  <p className="text-[10px] text-muted-foreground uppercase">Total Bulan</p>
-                </div>
-                <div className="text-center p-3 bg-muted/30 rounded-lg">
-                  <p className="text-sm font-bold text-foreground">{formatCurrency(summaryStats.totalPurchase)}</p>
-                  <p className="text-[10px] text-muted-foreground uppercase">Total Bayar</p>
-                </div>
-              </div>
-            </section>
+              </section>
+            </TabsContent>
 
-            {/* Tabs for Timeline & Transactions */}
-            <section className="border border-border/60 rounded-xl overflow-hidden">
-              <Tabs defaultValue="transactions" className="w-full">
-                <TabsList className="w-full bg-muted/30 rounded-none border-b border-border p-0 h-auto">
-                  <TabsTrigger 
-                    value="transactions" 
-                    className="flex-1 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent py-3 text-sm font-medium"
-                  >
-                    Riwayat Transaksi
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="timeline" 
-                    className="flex-1 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent py-3 text-sm font-medium"
-                  >
-                    Timeline Journey
-                  </TabsTrigger>
-                </TabsList>
+            {/* TAB 2: Riwayat Membership */}
+            <TabsContent value="history" className="mt-0 p-4 md:p-6 space-y-4">
+              {/* Timeline Journey */}
+              <div className="relative pl-6">
+                {/* Vertical line */}
+                <div className="absolute left-[9px] top-2 bottom-2 w-0.5 bg-gradient-to-b from-primary via-primary/50 to-border" />
+                
+                {journeyEvents.map((event) => {
+                  const EventIcon = eventIcons[event.title.split(" ")[0] + " " + (event.title.split(" ")[1] || "")] || ShoppingCart;
+                  return (
+                    <div key={event.id} className="relative pb-4 last:pb-0">
+                      {/* Timeline dot */}
+                      <div className={`absolute -left-6 top-1 w-4 h-4 rounded-full flex items-center justify-center ${
+                        event.isFuture 
+                          ? 'bg-muted border-2 border-border' 
+                          : 'bg-primary shadow-sm shadow-primary/30'
+                      }`}>
+                        {!event.isFuture && <EventIcon className="h-2 w-2 text-primary-foreground" />}
+                      </div>
 
-                <TabsContent value="transactions" className="p-4 mt-0 space-y-3">
-                  {journeyEvents
-                    .filter((e) => !e.isFuture && e.total !== undefined)
-                    .slice(0, 10)
-                    .map((event) => {
-                      const EventIcon = eventIcons[event.title.split(" ")[0] + " " + (event.title.split(" ")[1] || "")] || ShoppingCart;
-                      return (
-                        <div key={event.id} className="flex items-center gap-3 p-3 bg-muted/20 rounded-lg border border-border/50 hover:bg-muted/40 transition-colors">
-                          <div className="p-2 bg-primary/10 rounded-lg shrink-0">
-                            <EventIcon className="h-4 w-4 text-primary" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="font-medium text-sm truncate">{event.title}</p>
-                            <div className="flex items-center gap-2 mt-0.5">
-                              <span className="text-xs text-muted-foreground">
-                                {event.date.toLocaleDateString("id-ID")}
-                              </span>
-                              {event.duration && (
-                                <>
-                                  <span className="text-muted-foreground">•</span>
-                                  <span className="text-xs text-muted-foreground">{event.duration}</span>
-                                </>
-                              )}
-                            </div>
-                          </div>
-                          <div className="text-right shrink-0">
-                            <p className="font-semibold text-sm">{event.total ? formatCurrency(event.total) : "-"}</p>
-                            <div className="flex items-center gap-1 justify-end mt-0.5">
-                              <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-600">{event.statusBefore}</span>
-                              <ArrowRight className="h-2.5 w-2.5 text-muted-foreground" />
-                              <span className="text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary font-medium">{event.statusAfter}</span>
-                            </div>
-                          </div>
+                      {/* Event content */}
+                      <div className={`ml-2 p-3 rounded-lg border ${
+                        event.isFuture 
+                          ? 'bg-muted/30 border-dashed border-muted-foreground/30' 
+                          : 'bg-card border-border/50'
+                      }`}>
+                        <div className="flex items-center justify-between gap-2">
+                          <p className={`font-medium text-sm ${event.isFuture ? 'text-muted-foreground' : 'text-foreground'}`}>
+                            {event.title}
+                          </p>
+                          {event.total && !event.isFuture && (
+                            <span className="text-xs font-semibold text-primary shrink-0">{formatCurrency(event.total)}</span>
+                          )}
                         </div>
-                      );
-                    })}
-                  
-                  <Button variant="outline" size="sm" className="w-full mt-2">
-                    Lihat Semua di Tab Transaksi
-                    <ExternalLink className="h-3.5 w-3.5 ml-2" />
-                  </Button>
-                </TabsContent>
-
-                <TabsContent value="timeline" className="p-4 mt-0">
-                  <div className="relative pl-6">
-                    {/* Vertical line */}
-                    <div className="absolute left-[9px] top-2 bottom-2 w-0.5 bg-gradient-to-b from-primary via-primary/50 to-border" />
-                    
-                    {journeyEvents.map((event, index) => {
-                      const EventIcon = eventIcons[event.title.split(" ")[0] + " " + (event.title.split(" ")[1] || "")] || ShoppingCart;
-                      return (
-                        <div key={event.id} className="relative pb-6 last:pb-0">
-                          {/* Timeline dot */}
-                          <div className={`absolute -left-6 top-1 w-5 h-5 rounded-full flex items-center justify-center ${
-                            event.isFuture 
-                              ? 'bg-muted border-2 border-border' 
-                              : 'bg-primary shadow-md shadow-primary/30'
-                          }`}>
-                            {!event.isFuture && <EventIcon className="h-2.5 w-2.5 text-primary-foreground" />}
-                          </div>
-
-                          {/* Event content */}
-                          <div className={`ml-2 p-3 rounded-lg border ${
-                            event.isFuture 
-                              ? 'bg-muted/30 border-dashed border-muted-foreground/30' 
-                              : 'bg-card border-border/50 shadow-sm'
-                          }`}>
-                            <div className="flex items-center justify-between">
-                              <p className={`font-medium text-sm ${event.isFuture ? 'text-muted-foreground' : 'text-foreground'}`}>
-                                {event.title}
-                              </p>
-                              {event.total && !event.isFuture && (
-                                <span className="text-xs font-semibold text-primary">{formatCurrency(event.total)}</span>
-                              )}
+                        
+                        <div className="flex items-center gap-2 mt-1 flex-wrap">
+                          <span className="text-[10px] text-muted-foreground">
+                            {event.date.toLocaleDateString("id-ID")}
+                          </span>
+                          {!event.isFuture && (
+                            <div className="flex items-center gap-1">
+                              <span className="text-[9px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-600">{event.statusBefore}</span>
+                              <ArrowRight className="h-2 w-2 text-muted-foreground" />
+                              <span className="text-[9px] px-1.5 py-0.5 rounded bg-primary/10 text-primary font-medium">{event.statusAfter}</span>
                             </div>
-                            
-                            <div className="flex items-center gap-2 mt-1.5">
-                              <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                                <Calendar className="h-3 w-3" />
-                                <span>{event.date.toLocaleDateString("id-ID")}</span>
-                              </div>
-                              {!event.isFuture && (
-                                <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                                  <Clock className="h-3 w-3" />
-                                  <span>{event.date.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}</span>
-                                </div>
-                              )}
-                            </div>
-                            
-                            <div className="flex items-center gap-1.5 mt-2">
-                              <span className={`text-[10px] px-2 py-0.5 rounded-full ${tierColors[event.statusBefore]?.bg || 'bg-slate-100'} ${tierColors[event.statusBefore]?.text || 'text-slate-600'} font-medium`}>
-                                {event.statusBefore}
-                              </span>
-                              <ArrowRight className="h-3 w-3 text-muted-foreground" />
-                              <span className={`text-[10px] px-2 py-0.5 rounded-full ${tierColors[event.statusAfter]?.bg || 'bg-slate-100'} ${tierColors[event.statusAfter]?.text || 'text-slate-600'} font-medium`}>
-                                {event.statusAfter}
-                              </span>
-                            </div>
-                          </div>
+                          )}
                         </div>
-                      );
-                    })}
-                  </div>
-                </TabsContent>
-              </Tabs>
-            </section>
-          </div>
-        </ScrollArea>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </TabsContent>
+          </ScrollArea>
+        </Tabs>
       </SheetContent>
     </Sheet>
   );
