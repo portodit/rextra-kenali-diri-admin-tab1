@@ -249,6 +249,11 @@ export function AppSidebar({ className, onClose, isCollapsed: controlledCollapse
                 href="/membership/status"
                 isActive={location.pathname === "/membership/status"}
               />
+              <SidebarDropdownItem
+                label="Riwayat Langganan"
+                href="/membership/riwayat-langganan"
+                isActive={location.pathname === "/membership/riwayat-langganan"}
+              />
             </SidebarItem>
             <SidebarItem
               icon={Coins}
