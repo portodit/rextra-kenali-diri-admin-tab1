@@ -2,151 +2,154 @@ import { MemberUser } from "./types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { RefreshCw, AlertTriangle, Crown, Zap, Star, Award, CircleDot } from "lucide-react";
+import { RefreshCw, AlertTriangle, Crown, Zap, Star, Award, CircleDot, Calendar, Clock } from "lucide-react";
 
 interface UserCardProps {
   user: MemberUser;
   onViewDetail: (user: MemberUser) => void;
 }
 
-const tierIcons: Record<string, React.ElementType> = {
-  Max: Crown,
-  Pro: Award,
-  Basic: Star,
-  Starter: Zap,
-  Standard: CircleDot,
-};
-
-const tierColors: Record<string, string> = {
-  Max: "text-amber-600",
-  Pro: "text-violet-600",
-  Basic: "text-sky-600",
-  Starter: "text-emerald-600",
-  Standard: "text-slate-500",
+const tierConfig: Record<string, { icon: React.ElementType; gradient: string; bg: string }> = {
+  Max: { icon: Crown, gradient: "from-amber-500 to-orange-600", bg: "bg-amber-50" },
+  Pro: { icon: Award, gradient: "from-violet-500 to-purple-600", bg: "bg-violet-50" },
+  Basic: { icon: Star, gradient: "from-sky-500 to-blue-600", bg: "bg-sky-50" },
+  Starter: { icon: Zap, gradient: "from-emerald-500 to-teal-600", bg: "bg-emerald-50" },
+  Standard: { icon: CircleDot, gradient: "from-slate-400 to-slate-500", bg: "bg-slate-50" },
 };
 
 export function UserCard({ user, onViewDetail }: UserCardProps) {
-  const TierIcon = tierIcons[user.tier] || CircleDot;
-  const tierColor = tierColors[user.tier] || "text-slate-500";
+  const config = tierConfig[user.tier] || tierConfig.Standard;
+  const TierIcon = config.icon;
 
-  const getCategoryBadge = () => {
+  const getCategoryStyle = () => {
     switch (user.category) {
       case "REXTRA Club":
-        return <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100 border-0 text-xs">REXTRA Club</Badge>;
+        return "bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-sm";
       case "Trial Club":
-        return <Badge className="bg-violet-100 text-violet-700 hover:bg-violet-100 border-0 text-xs">Trial Club</Badge>;
+        return "bg-gradient-to-r from-violet-500 to-purple-600 text-white shadow-sm";
       case "Non-Club":
-        return <Badge className="bg-slate-100 text-slate-600 hover:bg-slate-100 border-0 text-xs">Non-Club</Badge>;
+        return "bg-slate-200 text-slate-700";
+      default:
+        return "bg-slate-100 text-slate-600";
     }
   };
 
-  const getValidityBadge = () => {
+  const getValidityStyle = () => {
     if (user.validityStatus === "Expired") {
-      return <Badge className="bg-red-100 text-red-700 hover:bg-red-100 border-0 text-xs">Expired</Badge>;
+      return { bg: "bg-red-500/10", text: "text-red-600", label: "Expired" };
     }
     if (user.validityStatus === "Expiring") {
-      return <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-100 border-0 text-xs">Akan berakhir</Badge>;
+      return { bg: "bg-amber-500/10", text: "text-amber-600", label: "Segera Berakhir" };
     }
     return null;
   };
 
-  const formatPrice = (price: number) => {
-    if (price === 0) return "Rp 0";
-    return `Rp ${price.toLocaleString("id-ID")}`;
-  };
+  const validityStyle = getValidityStyle();
 
-  const formatDuration = () => {
-    if (user.lastPurchaseDuration === 0) return "";
-    if (user.category === "Trial Club") return "(Trial)";
-    return `/ ${user.lastPurchaseDuration} bulan`;
+  const formatPrice = (price: number) => {
+    if (price === 0) return "Gratis";
+    return `Rp ${price.toLocaleString("id-ID")}`;
   };
 
   return (
     <div 
-      className="bg-card border border-border rounded-2xl p-4 hover:border-sky-300 hover:bg-sky-50/50 hover:shadow-[0_0_20px_-3px_rgba(14,165,233,0.3)] transition-all duration-200 cursor-pointer"
+      className="group relative bg-card border border-border rounded-2xl overflow-hidden hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 cursor-pointer"
       onClick={() => onViewDetail(user)}
     >
-      {/* Header */}
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center gap-3">
-          <Avatar className="h-10 w-10">
-            <AvatarFallback className="bg-primary/10 text-primary text-sm font-medium">
+      {/* Tier Accent Bar */}
+      <div className={`h-1 bg-gradient-to-r ${config.gradient}`} />
+      
+      <div className="p-4 space-y-4">
+        {/* Header: Avatar + Identity */}
+        <div className="flex items-start gap-3">
+          <Avatar className={`h-12 w-12 ring-2 ring-offset-2 ring-offset-background ${user.validityStatus === "Expired" ? "ring-red-300" : user.validityStatus === "Expiring" ? "ring-amber-300" : "ring-primary/20"}`}>
+            <AvatarFallback className={`${config.bg} text-foreground font-semibold`}>
               {user.name.split(" ").map(n => n[0]).join("").slice(0, 2)}
             </AvatarFallback>
           </Avatar>
-          <div className="min-w-0">
-            <h3 className="font-semibold text-foreground truncate">{user.name}</h3>
+          <div className="flex-1 min-w-0">
+            <h3 className="font-semibold text-foreground truncate leading-tight">{user.name}</h3>
+            <p className="text-xs text-muted-foreground truncate mt-0.5">{user.email}</p>
+            <p className="text-[10px] font-mono text-muted-foreground/70 mt-0.5">{user.userId}</p>
           </div>
         </div>
-      </div>
 
-      {/* Tier & Category */}
-      <div className="flex items-center gap-2 mb-3 flex-wrap">
-        <div className={`flex items-center gap-1.5 ${tierColor}`}>
-          <TierIcon className="h-4 w-4" />
-          <span className="font-medium text-sm">{user.tier}</span>
-        </div>
-        {getCategoryBadge()}
-        {getValidityBadge()}
-      </div>
-
-      {/* Contact */}
-      <div className="space-y-1 mb-3 text-sm text-muted-foreground">
-        <p className="truncate">{user.email}</p>
-        <p className="font-mono text-xs">{user.userId}</p>
-      </div>
-
-      {/* Duration */}
-      <div className="space-y-1 mb-3 text-sm">
-        {user.endDate && (
-          <>
-            <p className="text-muted-foreground">
-              Berakhir: {user.endDate.toLocaleDateString("id-ID")}
-            </p>
-            <p className={`font-medium ${
-              user.validityStatus === "Expired" ? "text-red-600" :
-              user.validityStatus === "Expiring" ? "text-amber-600" :
-              "text-foreground"
-            }`}>
-              {user.validityStatus === "Expired" 
-                ? `Expired ${Math.abs(user.remainingDays)} hari lalu`
-                : `Sisa: ${user.remainingDays} hari`}
-              {user.validityStatus === "Expiring" && (
-                <AlertTriangle className="inline h-3.5 w-3.5 ml-1" />
-              )}
-            </p>
-          </>
-        )}
-        {!user.endDate && user.category === "Non-Club" && (
-          <p className="text-muted-foreground">Sisa: 0 hari</p>
-        )}
-      </div>
-
-      {/* Price */}
-      <div className="mb-3 text-sm">
-        <p className="text-muted-foreground">
-          {formatPrice(user.lastPurchasePrice)} {formatDuration()}
-        </p>
-        {user.autoRenew && (
-          <div className="flex items-center gap-1 text-primary mt-1">
-            <RefreshCw className="h-3.5 w-3.5" />
-            <span className="text-xs font-medium">Auto-renew ON</span>
+        {/* Tier & Category Badges */}
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Tier Badge with icon */}
+          <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-gradient-to-r ${config.gradient} text-white text-xs font-semibold shadow-sm`}>
+            <TierIcon className="h-3.5 w-3.5" />
+            <span>{user.tier}</span>
           </div>
-        )}
-      </div>
+          
+          {/* Category Badge */}
+          <span className={`inline-flex px-2.5 py-1 rounded-lg text-xs font-semibold ${getCategoryStyle()}`}>
+            {user.category}
+          </span>
+          
+          {/* Validity Warning */}
+          {validityStyle && (
+            <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg ${validityStyle.bg} ${validityStyle.text} text-xs font-medium`}>
+              <AlertTriangle className="h-3 w-3" />
+              {validityStyle.label}
+            </span>
+          )}
+        </div>
 
-      {/* Action */}
-      <Button 
-        variant="outline" 
-        size="sm" 
-        className="w-full"
-        onClick={(e) => {
-          e.stopPropagation();
-          onViewDetail(user);
-        }}
-      >
-        Lihat Detail
-      </Button>
+        {/* Duration Info */}
+        <div className={`p-3 rounded-xl ${user.validityStatus === "Expired" ? "bg-red-50" : user.validityStatus === "Expiring" ? "bg-amber-50" : "bg-muted/50"}`}>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-sm">
+              <Calendar className="h-4 w-4 text-muted-foreground" />
+              <span className="text-muted-foreground">
+                {user.endDate ? `Berakhir ${user.endDate.toLocaleDateString("id-ID")}` : "Tidak ada masa berlaku"}
+              </span>
+            </div>
+            {user.autoRenew && (
+              <div className="flex items-center gap-1 text-primary">
+                <RefreshCw className="h-3.5 w-3.5" />
+                <span className="text-xs font-medium">Auto</span>
+              </div>
+            )}
+          </div>
+          
+          {user.endDate && (
+            <div className="mt-2 flex items-center gap-2">
+              <Clock className={`h-4 w-4 ${user.validityStatus === "Expired" ? "text-red-500" : user.validityStatus === "Expiring" ? "text-amber-500" : "text-foreground"}`} />
+              <span className={`text-sm font-semibold ${user.validityStatus === "Expired" ? "text-red-600" : user.validityStatus === "Expiring" ? "text-amber-600" : "text-foreground"}`}>
+                {user.validityStatus === "Expired" 
+                  ? `Expired ${Math.abs(user.remainingDays)} hari lalu`
+                  : `Sisa ${user.remainingDays} hari`}
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* Price Info */}
+        <div className="flex items-center justify-between pt-1">
+          <div>
+            <p className="text-lg font-bold text-foreground">{formatPrice(user.lastPurchasePrice)}</p>
+            {user.lastPurchaseDuration > 0 && user.category !== "Trial Club" && (
+              <p className="text-xs text-muted-foreground">/ {user.lastPurchaseDuration} bulan</p>
+            )}
+            {user.category === "Trial Club" && (
+              <p className="text-xs text-violet-600 font-medium">Trial Period</p>
+            )}
+          </div>
+          
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-colors"
+            onClick={(e) => {
+              e.stopPropagation();
+              onViewDetail(user);
+            }}
+          >
+            Lihat Detail
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }
