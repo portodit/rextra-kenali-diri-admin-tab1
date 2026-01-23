@@ -6,8 +6,8 @@ import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { 
   Copy, CheckCircle2, Clock, XCircle, AlertCircle, Ban,
-  FileText, Receipt, ExternalLink, Coins, Gift, 
-  CreditCard, Wallet, Building2
+  FileText, Receipt, Coins, Gift, 
+  CreditCard, Wallet, Building2, ArrowRight
 } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
@@ -32,23 +32,19 @@ export function TransactionDetailDrawer({ transaction, open, onClose }: Transact
     return `${prefix}Rp ${Math.abs(value).toLocaleString("id-ID")}`;
   };
 
-  const getPaymentStatusBadge = (status: string) => {
-    const statusConfig: Record<string, { icon: React.ReactNode; className: string }> = {
-      "Berhasil": { icon: <CheckCircle2 className="h-3.5 w-3.5" />, className: "bg-emerald-100 text-emerald-700" },
-      "Menunggu": { icon: <Clock className="h-3.5 w-3.5" />, className: "bg-amber-100 text-amber-700" },
-      "Gagal": { icon: <XCircle className="h-3.5 w-3.5" />, className: "bg-red-100 text-red-700" },
-      "Dibatalkan": { icon: <Ban className="h-3.5 w-3.5" />, className: "bg-slate-200 text-slate-700" },
-      "Expired": { icon: <AlertCircle className="h-3.5 w-3.5" />, className: "bg-slate-100 text-slate-500" },
-      "Refund": { icon: null, className: "bg-violet-100 text-violet-700" },
+  const getPaymentStatusConfig = (status: string) => {
+    const statusConfig: Record<string, { icon: React.ReactNode; bg: string; text: string; ring: string }> = {
+      "Berhasil": { icon: <CheckCircle2 className="h-3.5 w-3.5" />, bg: "bg-emerald-500", text: "text-white", ring: "ring-emerald-200" },
+      "Menunggu": { icon: <Clock className="h-3.5 w-3.5" />, bg: "bg-amber-500", text: "text-white", ring: "ring-amber-200" },
+      "Gagal": { icon: <XCircle className="h-3.5 w-3.5" />, bg: "bg-red-500", text: "text-white", ring: "ring-red-200" },
+      "Dibatalkan": { icon: <Ban className="h-3.5 w-3.5" />, bg: "bg-slate-500", text: "text-white", ring: "ring-slate-200" },
+      "Expired": { icon: <AlertCircle className="h-3.5 w-3.5" />, bg: "bg-slate-400", text: "text-white", ring: "ring-slate-200" },
+      "Refund": { icon: <ArrowRight className="h-3.5 w-3.5" />, bg: "bg-violet-500", text: "text-white", ring: "ring-violet-200" },
     };
-    const config = statusConfig[status] || { icon: null, className: "bg-slate-100 text-slate-600" };
-    return (
-      <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold ${config.className}`}>
-        {config.icon}
-        <span>{status}</span>
-      </div>
-    );
+    return statusConfig[status] || { icon: null, bg: "bg-slate-400", text: "text-white", ring: "ring-slate-200" };
   };
+
+  const statusConfig = getPaymentStatusConfig(transaction.paymentStatus);
 
   const getPaymentMethodIcon = (method: string) => {
     if (method.includes("E-Wallet") || method.includes("QRIS")) return <Wallet className="h-5 w-5" />;
@@ -57,198 +53,216 @@ export function TransactionDetailDrawer({ transaction, open, onClose }: Transact
     return <CreditCard className="h-5 w-5" />;
   };
 
-  const getTimelineStatusStyle = (status: string, isLast: boolean) => {
+  const getTimelineIcon = (status: string) => {
     if (status.includes("gagal") || status.includes("Gagal")) {
-      return { dot: "bg-red-500", text: "text-red-600 font-medium" };
+      return { icon: <XCircle className="h-4 w-4" />, color: "text-red-500", bg: "bg-red-100" };
     }
-    if (status.includes("kadaluarsa") || status.includes("Expired")) {
-      return { dot: "bg-slate-400", text: "text-slate-500" };
-    }
-    if (status.includes("dibatalkan") || status.includes("Dibatalkan")) {
-      return { dot: "bg-slate-400", text: "text-slate-500" };
+    if (status.includes("kadaluarsa") || status.includes("Expired") || status.includes("dibatalkan") || status.includes("Dibatalkan")) {
+      return { icon: <AlertCircle className="h-4 w-4" />, color: "text-slate-400", bg: "bg-slate-100" };
     }
     if (status.includes("berhasil") || status.includes("diaktifkan") || status.includes("diberikan") || status.includes("diperbarui") || status.includes("diperpanjang")) {
-      return { dot: "bg-emerald-500", text: "text-emerald-600 font-medium" };
+      return { icon: <CheckCircle2 className="h-4 w-4" />, color: "text-emerald-500", bg: "bg-emerald-100" };
     }
-    if (isLast) {
-      return { dot: "bg-primary", text: "text-foreground font-medium" };
+    if (status.includes("dibuat") || status.includes("menunggu")) {
+      return { icon: <Clock className="h-4 w-4" />, color: "text-blue-500", bg: "bg-blue-100" };
     }
-    return { dot: "bg-slate-300", text: "text-muted-foreground" };
+    return { icon: <Clock className="h-4 w-4" />, color: "text-slate-400", bg: "bg-slate-100" };
   };
 
   return (
     <Sheet open={open} onOpenChange={onClose}>
-      <SheetContent className="w-full sm:max-w-lg p-0 flex flex-col">
-        {/* Sticky Header */}
-        <SheetHeader className="p-4 md:p-6 border-b border-border bg-card">
-          <div className="flex items-start justify-between gap-3">
-            <div className="space-y-2">
-              <SheetTitle className="text-left text-lg">Detail Transaksi</SheetTitle>
-              <div className="flex items-center gap-2">
-                <code className="text-xs font-mono bg-muted px-2 py-1 rounded">
-                  {transaction.referenceId}
-                </code>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-6 w-6"
-                  onClick={() => handleCopy(transaction.referenceId)}
-                >
-                  <Copy className="h-3 w-3" />
-                </Button>
-              </div>
+      <SheetContent className="w-full sm:max-w-md p-0 flex flex-col gap-0">
+        {/* Header */}
+        <SheetHeader className="p-5 pb-4 border-b border-border/50">
+          <div className="space-y-3">
+            <SheetTitle className="text-left text-lg font-semibold">Detail Transaksi</SheetTitle>
+            
+            {/* Transaction ID with copy */}
+            <div className="flex items-center gap-2">
+              <code className="text-xs font-mono bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md border border-slate-200">
+                {transaction.referenceId}
+              </code>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7 hover:bg-slate-100"
+                onClick={() => handleCopy(transaction.referenceId)}
+              >
+                <Copy className="h-3.5 w-3.5 text-slate-500" />
+              </Button>
             </div>
-            {getPaymentStatusBadge(transaction.paymentStatus)}
+
+            {/* Status Badge + Date inline */}
+            <div className="flex items-center gap-3">
+              <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ring-2 ${statusConfig.bg} ${statusConfig.text} ${statusConfig.ring}`}>
+                {statusConfig.icon}
+                <span>{transaction.paymentStatus}</span>
+              </div>
+              <span className="text-xs text-muted-foreground">
+                {format(transaction.date, "EEEE, dd MMM yyyy • HH:mm", { locale: id })} WIB
+              </span>
+            </div>
           </div>
-          <p className="text-xs text-muted-foreground text-left">
-            {format(transaction.date, "EEEE, dd MMMM yyyy • HH:mm:ss", { locale: id })} WIB
-          </p>
         </SheetHeader>
 
         <ScrollArea className="flex-1">
-          <div className="p-4 md:p-6 space-y-5">
+          <div className="p-5 space-y-5">
             {/* Ringkasan Transaksi */}
-            <section className="bg-muted/30 rounded-xl p-4 space-y-3">
-              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+            <section className="space-y-3">
+              <h3 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
                 Ringkasan Transaksi
               </h3>
 
-              <div className="grid grid-cols-2 gap-3 text-sm">
-                <div>
-                  <p className="text-muted-foreground text-xs">User</p>
-                  <p className="font-medium">{transaction.user.name}</p>
-                  <p className="text-xs text-muted-foreground">{transaction.user.email}</p>
-                </div>
-                <div>
-                  <p className="text-muted-foreground text-xs">User ID</p>
-                  <p className="font-mono text-xs">{transaction.user.userId}</p>
-                </div>
-                <div>
-                  <p className="text-muted-foreground text-xs">Jenis Transaksi</p>
-                  <p className="font-medium">{transaction.eventType}</p>
-                </div>
-                <div>
-                  <p className="text-muted-foreground text-xs">Kategori</p>
-                  <p className="font-medium">{transaction.category}</p>
-                </div>
-                <div>
-                  <p className="text-muted-foreground text-xs">Status Perubahan</p>
-                  <p className="font-medium">{transaction.statusBefore} → {transaction.statusAfter}</p>
-                </div>
-                <div>
-                  <p className="text-muted-foreground text-xs">Durasi</p>
-                  <p className="font-medium">{transaction.duration}</p>
+              <div className="bg-slate-50/80 rounded-xl border border-slate-100 p-4">
+                <div className="grid grid-cols-2 gap-x-4 gap-y-3.5">
+                  <div>
+                    <p className="text-[11px] text-muted-foreground mb-0.5">User</p>
+                    <p className="text-sm font-medium">{transaction.user.name}</p>
+                    <p className="text-[11px] text-muted-foreground">{transaction.user.email}</p>
+                  </div>
+                  <div>
+                    <p className="text-[11px] text-muted-foreground mb-0.5">User ID</p>
+                    <p className="text-xs font-mono text-slate-600">{transaction.user.userId}</p>
+                  </div>
+                  <div>
+                    <p className="text-[11px] text-muted-foreground mb-0.5">Jenis Transaksi</p>
+                    <p className="text-sm font-medium">{transaction.eventType}</p>
+                  </div>
+                  <div>
+                    <p className="text-[11px] text-muted-foreground mb-0.5">Kategori</p>
+                    <p className="text-sm font-medium">{transaction.category}</p>
+                  </div>
+                  <div>
+                    <p className="text-[11px] text-muted-foreground mb-0.5">Status Perubahan</p>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-sm font-medium">{transaction.statusBefore}</span>
+                      <ArrowRight className="h-3.5 w-3.5 text-muted-foreground" />
+                      <span className="text-sm font-medium">{transaction.statusAfter}</span>
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-[11px] text-muted-foreground mb-0.5">Durasi</p>
+                    <p className="text-sm font-medium">{transaction.duration}</p>
+                  </div>
                 </div>
               </div>
             </section>
 
             {/* Breakdown Harga */}
-            <section className="bg-muted/30 rounded-xl p-4 space-y-3">
-              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+            <section className="space-y-3">
+              <h3 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
                 Breakdown Harga
               </h3>
 
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
+              <div className="bg-slate-50/80 rounded-xl border border-slate-100 p-4 space-y-2.5">
+                <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Harga Dasar</span>
-                  <span>{formatCurrency(transaction.basePrice)}</span>
+                  <span className="font-medium">{formatCurrency(transaction.basePrice)}</span>
                 </div>
                 
                 {transaction.durationDiscount > 0 && (
-                  <div className="flex justify-between text-emerald-600">
+                  <div className="flex justify-between text-sm text-emerald-600">
                     <span>Diskon Durasi</span>
-                    <span>-{formatCurrency(transaction.durationDiscount)}</span>
+                    <span className="font-medium">-{formatCurrency(transaction.durationDiscount)}</span>
                   </div>
                 )}
                 
                 {transaction.promoCode && transaction.promoDiscount > 0 && (
-                  <div className="flex justify-between text-emerald-600">
+                  <div className="flex justify-between text-sm text-emerald-600">
                     <span>Promo ({transaction.promoCode})</span>
-                    <span>-{formatCurrency(transaction.promoDiscount)}</span>
+                    <span className="font-medium">-{formatCurrency(transaction.promoDiscount)}</span>
                   </div>
                 )}
 
                 {transaction.adminFee > 0 && (
-                  <div className="flex justify-between">
+                  <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Biaya Admin</span>
-                    <span>+{formatCurrency(transaction.adminFee)}</span>
+                    <span className="font-medium">+{formatCurrency(transaction.adminFee)}</span>
                   </div>
                 )}
 
                 <Separator className="my-2" />
 
-                <div className="flex justify-between font-bold text-base">
-                  <span>Total Bayar</span>
-                  <span className={transaction.totalPaid < 0 ? "text-violet-600" : ""}>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-semibold">Total Bayar</span>
+                  <span className={`text-lg font-bold ${transaction.totalPaid < 0 ? "text-violet-600" : "text-foreground"}`}>
                     {formatCurrency(transaction.totalPaid)}
                   </span>
                 </div>
               </div>
             </section>
 
-            {/* Pembayaran - Modern Card */}
-            <section className="rounded-xl border border-border overflow-hidden">
-              <div className="bg-gradient-to-r from-slate-50 to-slate-100 p-4 flex items-center justify-between">
-                <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                  Pembayaran
-                </h3>
-              </div>
+            {/* Pembayaran */}
+            <section className="space-y-3">
+              <h3 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+                Pembayaran
+              </h3>
               
-              <div className="p-4 space-y-4">
-                {/* Payment Method Card */}
-                <div className="flex items-center gap-4 p-3 bg-muted/40 rounded-lg">
-                  <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+              <div className="space-y-4">
+                {/* Payment Method */}
+                <div className="flex items-center gap-3 p-3.5 bg-gradient-to-r from-slate-50 to-slate-100/50 rounded-xl border border-slate-200/80">
+                  <div className="h-11 w-11 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-600 shadow-sm">
                     {getPaymentMethodIcon(transaction.paymentMethod)}
                   </div>
-                  <div className="flex-1">
-                    <p className="font-semibold text-sm">{transaction.paymentMethod}</p>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-slate-800">{transaction.paymentMethod}</p>
                     {transaction.paymentGatewayRef && (
                       <div className="flex items-center gap-1.5 mt-0.5">
-                        <code className="text-[11px] font-mono text-muted-foreground">
+                        <code className="text-[11px] font-mono text-slate-500 truncate">
                           {transaction.paymentGatewayRef}
                         </code>
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-5 w-5"
+                          className="h-5 w-5 shrink-0 hover:bg-slate-200/50"
                           onClick={() => handleCopy(transaction.paymentGatewayRef!)}
                         >
-                          <Copy className="h-2.5 w-2.5" />
+                          <Copy className="h-2.5 w-2.5 text-slate-400" />
                         </Button>
                       </div>
                     )}
                   </div>
                 </div>
 
-                {/* Status Timeline - Modern */}
-                <div className="space-y-2">
-                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                    Status Timeline
-                  </p>
-                  <div className="relative pl-4">
-                    {/* Vertical line */}
-                    <div className="absolute left-[7px] top-2 bottom-2 w-[2px] bg-gradient-to-b from-muted via-muted to-transparent" />
-                    
-                    <div className="space-y-3">
-                      {transaction.paymentTimeline.map((item, index) => {
-                        const isLast = index === transaction.paymentTimeline.length - 1;
-                        const style = getTimelineStatusStyle(item.status, isLast);
-                        return (
-                          <div key={index} className="relative flex items-start gap-3">
-                            {/* Dot */}
-                            <div className={`absolute -left-4 top-1.5 h-3 w-3 rounded-full ${style.dot} ring-2 ring-background`} />
-                            
-                            {/* Content */}
-                            <div className="flex-1 flex items-center justify-between gap-2 min-w-0">
-                              <p className={`text-sm ${style.text}`}>{item.status}</p>
-                              <span className="text-xs text-muted-foreground font-mono shrink-0">
+                {/* Modern Status Timeline */}
+                <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+                  <div className="px-4 py-2.5 bg-slate-50 border-b border-slate-100">
+                    <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+                      Status Timeline
+                    </p>
+                  </div>
+                  
+                  <div className="p-4 space-y-0">
+                    {transaction.paymentTimeline.map((item, index) => {
+                      const isLast = index === transaction.paymentTimeline.length - 1;
+                      const style = getTimelineIcon(item.status);
+                      
+                      return (
+                        <div key={index} className="relative flex gap-3">
+                          {/* Timeline line */}
+                          {!isLast && (
+                            <div className="absolute left-[15px] top-[30px] bottom-0 w-px bg-slate-200" />
+                          )}
+                          
+                          {/* Icon */}
+                          <div className={`relative z-10 h-8 w-8 rounded-full ${style.bg} flex items-center justify-center shrink-0 ${style.color}`}>
+                            {style.icon}
+                          </div>
+                          
+                          {/* Content */}
+                          <div className={`flex-1 pb-4 ${isLast ? 'pb-0' : ''}`}>
+                            <div className="flex items-start justify-between gap-2">
+                              <p className={`text-sm font-medium ${style.color === 'text-emerald-500' ? 'text-slate-800' : style.color === 'text-red-500' ? 'text-red-600' : 'text-slate-600'}`}>
+                                {item.status}
+                              </p>
+                              <span className="text-[11px] text-slate-400 font-mono shrink-0 pt-0.5">
                                 {item.time}
                               </span>
                             </div>
                           </div>
-                        );
-                      })}
-                    </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
@@ -256,34 +270,34 @@ export function TransactionDetailDrawer({ transaction, open, onClose }: Transact
 
             {/* Benefit Diberikan */}
             {(transaction.tokenGiven !== 0 || transaction.pointsGiven !== 0) && (
-              <section className="bg-muted/30 rounded-xl p-4 space-y-3">
-                <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+              <section className="space-y-3">
+                <h3 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
                   Benefit Diberikan
                 </h3>
 
                 <div className="grid grid-cols-2 gap-3">
                   {/* Token */}
-                  <div className="bg-card rounded-lg p-3 border border-border">
+                  <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-3.5 border border-amber-200/50">
                     <div className="flex items-center gap-2 mb-2">
                       <div className="h-8 w-8 rounded-lg bg-amber-100 flex items-center justify-center">
                         <Coins className="h-4 w-4 text-amber-600" />
                       </div>
-                      <span className="text-xs text-muted-foreground">Token</span>
+                      <span className="text-xs text-amber-700/80 font-medium">Token</span>
                     </div>
-                    <p className={`text-lg font-bold ${transaction.tokenGiven < 0 ? 'text-red-600' : transaction.tokenGiven > 0 ? 'text-emerald-600' : 'text-muted-foreground'}`}>
+                    <p className={`text-xl font-bold ${transaction.tokenGiven < 0 ? 'text-red-600' : transaction.tokenGiven > 0 ? 'text-amber-700' : 'text-slate-400'}`}>
                       {transaction.tokenGiven > 0 ? '+' : ''}{transaction.tokenGiven}
                     </p>
                   </div>
 
                   {/* Poin */}
-                  <div className="bg-card rounded-lg p-3 border border-border">
+                  <div className="bg-gradient-to-br from-violet-50 to-purple-50 rounded-xl p-3.5 border border-violet-200/50">
                     <div className="flex items-center gap-2 mb-2">
                       <div className="h-8 w-8 rounded-lg bg-violet-100 flex items-center justify-center">
                         <Gift className="h-4 w-4 text-violet-600" />
                       </div>
-                      <span className="text-xs text-muted-foreground">Poin</span>
+                      <span className="text-xs text-violet-700/80 font-medium">Poin</span>
                     </div>
-                    <p className={`text-lg font-bold ${transaction.pointsGiven < 0 ? 'text-red-600' : transaction.pointsGiven > 0 ? 'text-emerald-600' : 'text-muted-foreground'}`}>
+                    <p className={`text-xl font-bold ${transaction.pointsGiven < 0 ? 'text-red-600' : transaction.pointsGiven > 0 ? 'text-violet-700' : 'text-slate-400'}`}>
                       {transaction.pointsGiven > 0 ? '+' : ''}{transaction.pointsGiven.toLocaleString("id-ID")}
                     </p>
                   </div>
@@ -293,22 +307,26 @@ export function TransactionDetailDrawer({ transaction, open, onClose }: Transact
 
             {/* Dokumen */}
             <section className="space-y-3">
-              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+              <h3 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
                 Dokumen
               </h3>
 
               <div className="grid grid-cols-2 gap-3">
-                <Button variant="outline" size="sm" className="justify-start h-auto py-3">
-                  <FileText className="h-4 w-4 mr-2 text-primary" />
+                <Button variant="outline" className="justify-start h-auto py-3 px-3.5 bg-white hover:bg-slate-50 border-slate-200">
+                  <div className="h-9 w-9 rounded-lg bg-blue-50 flex items-center justify-center mr-3">
+                    <FileText className="h-4 w-4 text-blue-600" />
+                  </div>
                   <div className="text-left">
-                    <p className="text-xs font-medium">Invoice</p>
+                    <p className="text-xs font-semibold text-slate-700">Invoice</p>
                     <p className="text-[10px] text-muted-foreground">Download PDF</p>
                   </div>
                 </Button>
-                <Button variant="outline" size="sm" className="justify-start h-auto py-3">
-                  <Receipt className="h-4 w-4 mr-2 text-primary" />
+                <Button variant="outline" className="justify-start h-auto py-3 px-3.5 bg-white hover:bg-slate-50 border-slate-200">
+                  <div className="h-9 w-9 rounded-lg bg-emerald-50 flex items-center justify-center mr-3">
+                    <Receipt className="h-4 w-4 text-emerald-600" />
+                  </div>
                   <div className="text-left">
-                    <p className="text-xs font-medium">Receipt</p>
+                    <p className="text-xs font-semibold text-slate-700">Receipt</p>
                     <p className="text-[10px] text-muted-foreground">Download PDF</p>
                   </div>
                 </Button>
